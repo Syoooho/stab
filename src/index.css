@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .glass {
+    @apply backdrop-blur-md bg-white/10 border border-white/20 shadow-lg;
+  }
+}
+
+body {
+  @apply m-0 min-h-screen text-white;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
