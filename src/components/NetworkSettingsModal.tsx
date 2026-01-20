@@ -105,55 +105,55 @@ export const NetworkSettingsModal = ({ isOpen, onClose, config, onChange }: Netw
             <X className="w-5 h-5" />
           </button>
           
-          <h2 className="text-xl font-bold mb-6 text-white">网络检测设置</h2>
+          <h2 className="text-xl font-bold mb-6 text-white">网络服务设置</h2>
           <p className="text-xs text-white/50 mb-4">
-               配置检测 URL 及访问优先级。系统将按照优先级顺序尝试打开应用链接。
+               配置网络服务地址及访问优先级。系统将按照优先级顺序尝试打开应用链接。
            </p>
           
           <form onSubmit={handleSubmit} className="space-y-6">
              <div className="space-y-4">
-                <h3 className="text-sm font-medium text-white/90">检测地址</h3>
+                <h3 className="text-sm font-medium text-white/90">服务地址</h3>
                 <div>
-                   <label className="block text-xs font-medium text-white/70 mb-1">内网检测 URL</label>
+                   <label className="block text-xs font-medium text-white/70 mb-1">内网服务地址</label>
                    <input 
                       type="text" 
                       value={internalUrl}
                       onChange={(e) => setInternalUrl(e.target.value)}
                       className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-white/30"
-                      placeholder="http://gitlab.internal"
+                      placeholder="http://192.168.1.2:8080"
                    />
                 </div>
 
                 <div>
-                   <label className="block text-xs font-medium text-white/70 mb-1">组网检测 URL</label>
+                   <label className="block text-xs font-medium text-white/70 mb-1">组网服务地址</label>
                    <input 
                       type="text" 
                       value={meshUrl}
                       onChange={(e) => setMeshUrl(e.target.value)}
                       className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-white/30"
-                      placeholder="http://10.x.x.x"
+                      placeholder="http://100.64.0.2:8080"
                    />
                 </div>
 
                 <div>
-                   <label className="block text-xs font-medium text-white/70 mb-1">FRP 检测 URL</label>
+                   <label className="block text-xs font-medium text-white/70 mb-1">FRP 服务地址</label>
                    <input 
                       type="text" 
                       value={frpUrl}
                       onChange={(e) => setFrpUrl(e.target.value)}
                       className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-white/30"
-                      placeholder="http://frp.example.com"
+                      placeholder="https://your-domain.com:8080"
                    />
                 </div>
 
                 <div>
-                   <label className="block text-xs font-medium text-white/70 mb-1">公网检测 URL</label>
+                   <label className="block text-xs font-medium text-white/70 mb-1">公网服务地址</label>
                    <input 
                       type="text" 
                       value={publicUrl}
                       onChange={(e) => setPublicUrl(e.target.value)}
                       className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-white/30"
-                      placeholder="https://www.google.com"
+                      placeholder="https://your-domain.com"
                    />
                 </div>
              </div>

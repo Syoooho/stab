@@ -1,7 +1,7 @@
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import type { App, NetworkStatus, SystemConfig } from '../types';
 import { AppIcon } from './AppIcon';
 import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -46,10 +46,10 @@ export const SmartLauncher = ({ apps, onReorder, networkStatus, systemConfig, on
   const lastWheelTime = useRef(0);
 
   const totalPages = Math.ceil((apps.length + 1) / ITEMS_PER_PAGE); 
-  
-  if (currentPage >= totalPages && currentPage > 0) {
-      setCurrentPage(totalPages - 1);
-  }
+
+  useEffect(() => {
+      setCurrentPage(prev => Math.max(0, Math.min(totalPages - 1, prev)));
+  }, [totalPages]);
 
   const handlePageChange = (newDir: number) => {
       setDirection(newDir);
@@ -57,6 +57,8 @@ export const SmartLauncher = ({ apps, onReorder, networkStatus, systemConfig, on
   };
 
   const handleWheel = (e: React.WheelEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
       const now = Date.now();
       if (now - lastWheelTime.current < 500) return; // 500ms throttle
       
@@ -110,7 +112,7 @@ export const SmartLauncher = ({ apps, onReorder, networkStatus, systemConfig, on
     <div className="w-full max-w-5xl mx-auto px-6 py-2 flex flex-col items-center">
       {/* Fixed height container for grid to prevent layout shifts */}
       <div 
-        className="w-full h-[380px] relative overflow-hidden"
+        className="w-full h-[450px] relative overflow-hidden overscroll-contain"
         onWheel={handleWheel}
       >
           <DndContext
@@ -127,11 +129,11 @@ export const SmartLauncher = ({ apps, onReorder, networkStatus, systemConfig, on
                     animate={{ x: 0, opacity: 1 }}
                     exit={{ x: direction > 0 ? -1000 : 1000, opacity: 0 }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    className="absolute inset-0"
+                    className="absolute inset-0 w-full h-full"
                 >
                     <SortableContext items={pageApps.map(a => a.id)} strategy={rectSortingStrategy}>
                     {/* Using grid layout to enforce alignment */}
-                    <div className="grid grid-cols-6 gap-y-6 gap-x-6 content-start justify-items-center">
+                    <div className="grid grid-cols-6 gap-y-4 gap-x-6 content-start justify-items-center w-full px-4">
                         {pageApps.map((app) => (
                         <SortableItem key={app.id} app={app} networkStatus={networkStatus} systemConfig={systemConfig} onContextMenu={onContextMenu} />
                         ))}
@@ -167,8 +169,8 @@ export const SmartLauncher = ({ apps, onReorder, networkStatus, systemConfig, on
           </DndContext>
       </div>
 
-      {/* Pagination Controls - Moved down slightly with mt-8 */}
-      <div className="flex items-center gap-4 mt-8 h-10">
+      {/* Pagination Controls - Moved down slightly with mt-2 */}
+      <div className="flex items-center gap-4 mt-2 h-10">
           {totalPages > 1 && (
               <>
                   <button 

@@ -9,6 +9,7 @@ export const useNetworkStatus = (config?: SystemConfig) => {
     public: false, 
     latencies: {}
   });
+  const [isChecking, setIsChecking] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const refresh = () => setRefreshTrigger(prev => prev + 1);
@@ -18,20 +19,23 @@ export const useNetworkStatus = (config?: SystemConfig) => {
     // This is the "Better Scheme" that bypasses CORS and Mixed Content issues
     if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
         const checkExtension = () => {
+             setIsChecking(true);
              chrome.runtime.sendMessage({ type: 'CHECK_NETWORK', config }, (response) => {
                  if (chrome.runtime.lastError) {
                      // Fallback or log error
                      console.warn('Extension background check failed:', chrome.runtime.lastError);
+                     setIsChecking(false);
                      return;
                  }
                  if (response) {
                      setStatus(response);
                  }
+                 setIsChecking(false);
              });
         };
 
         checkExtension();
-        const interval = setInterval(checkExtension, 30000);
+        const interval = setInterval(checkExtension, 30 * 60 * 1000);
         return () => clearInterval(interval);
     }
     
@@ -61,6 +65,7 @@ export const useNetworkStatus = (config?: SystemConfig) => {
     };
 
     const checkAll = async () => {
+        setIsChecking(true);
         const [internal, mesh, frp, publicNet] = await Promise.all([
             checkUrl(config.internalCheckUrl),
             checkUrl(config.meshCheckUrl),
@@ -80,13 +85,14 @@ export const useNetworkStatus = (config?: SystemConfig) => {
                 public: publicNet ?? undefined
             }
         });
+        setIsChecking(false);
     };
 
     checkAll();
-    const interval = setInterval(checkAll, 30000); // Relaxed interval to 30s
+    const interval = setInterval(checkAll, 30 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, [config, refreshTrigger]);
 
-  return { ...status, refresh };
+  return { ...status, refresh, isChecking };
 };

@@ -1,6 +1,6 @@
 import { Sidebar } from './Sidebar';
 import type { SystemConfig, NetworkType } from '../../types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -11,6 +11,8 @@ interface SettingsSidebarProps {
   onClose: () => void;
   config: SystemConfig;
   onChange: (config: SystemConfig) => void;
+  onExportSettings?: () => void;
+  onImportSettings?: (data: unknown) => void;
 }
 
 const SortablePriorityItem = ({ type, label }: { type: NetworkType, label: string }) => {
@@ -31,12 +33,13 @@ const SortablePriorityItem = ({ type, label }: { type: NetworkType, label: strin
     );
 };
 
-export const SettingsSidebar = ({ isOpen, onClose, config, onChange }: SettingsSidebarProps) => {
+export const SettingsSidebar = ({ isOpen, onClose, config, onChange, onExportSettings, onImportSettings }: SettingsSidebarProps) => {
   const [internalUrl, setInternalUrl] = useState(config.internalCheckUrl);
   const [meshUrl, setMeshUrl] = useState(config.meshCheckUrl);
   const [frpUrl, setFrpUrl] = useState(config.frpCheckUrl || '');
   const [publicUrl, setPublicUrl] = useState(config.publicCheckUrl);
   const [priority, setPriority] = useState<NetworkType[]>(config.urlPriority || ['internal', 'mesh', 'frp', 'public']);
+  const importInputRef = useRef<HTMLInputElement | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -66,6 +69,19 @@ export const SettingsSidebar = ({ isOpen, onClose, config, onChange }: SettingsS
     });
   };
 
+  const handleClickImport = () => {
+      importInputRef.current?.click();
+  };
+
+  const handleImportFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file || !onImportSettings) return;
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      onImportSettings(parsed);
+      e.target.value = '';
+  };
+
   const handleDragEnd = (event: any) => {
       const { active, over } = event;
       if (active.id !== over.id) {
@@ -93,57 +109,57 @@ export const SettingsSidebar = ({ isOpen, onClose, config, onChange }: SettingsS
     <Sidebar isOpen={isOpen} onClose={onClose} position="right" title="系统设置">
       <div className="space-y-8 pb-8">
         
-        {/* Network Check Settings */}
+        {/* Network Service Settings */}
         <section>
             <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                网络检测地址
+                网络服务地址
             </h3>
             <div className="space-y-3">
                 <div>
-                   <label className="block text-xs font-medium text-white/50 mb-1">内网检测 URL</label>
+                   <label className="block text-xs font-medium text-white/50 mb-1">内网服务地址</label>
                    <input 
                       type="text" 
                       value={internalUrl}
                       onChange={(e) => setInternalUrl(e.target.value)}
                       onBlur={handleSave}
                       className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-white/30"
-                      placeholder="http://gitlab.internal"
+                      placeholder="http://192.168.1.2:8080"
                    />
                 </div>
 
                 <div>
-                   <label className="block text-xs font-medium text-white/50 mb-1">组网检测 URL</label>
+                   <label className="block text-xs font-medium text-white/50 mb-1">组网服务地址</label>
                    <input 
                       type="text" 
                       value={meshUrl}
                       onChange={(e) => setMeshUrl(e.target.value)}
                       onBlur={handleSave}
                       className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-white/30"
-                      placeholder="http://10.x.x.x"
+                      placeholder="http://100.64.0.2:8080"
                    />
                 </div>
 
                 <div>
-                   <label className="block text-xs font-medium text-white/50 mb-1">FRP 检测 URL</label>
+                   <label className="block text-xs font-medium text-white/50 mb-1">FRP 服务地址</label>
                    <input 
                       type="text" 
                       value={frpUrl}
                       onChange={(e) => setFrpUrl(e.target.value)}
                       onBlur={handleSave}
                       className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-white/30"
-                      placeholder="http://frp.example.com"
+                      placeholder="https://your-domain.com:8080"
                    />
                 </div>
 
                 <div>
-                   <label className="block text-xs font-medium text-white/50 mb-1">公网检测 URL</label>
+                   <label className="block text-xs font-medium text-white/50 mb-1">公网服务地址</label>
                    <input 
                       type="text" 
                       value={publicUrl}
                       onChange={(e) => setPublicUrl(e.target.value)}
                       onBlur={handleSave}
                       className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-white/30"
-                      placeholder="https://www.google.com"
+                      placeholder="https://your-domain.com"
                    />
                 </div>
             </div>
@@ -168,6 +184,37 @@ export const SettingsSidebar = ({ isOpen, onClose, config, onChange }: SettingsS
                      ))}
                  </SortableContext>
              </DndContext>
+        </section>
+
+        <section>
+            <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                导入 / 导出
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+                <button
+                    type="button"
+                    onClick={onExportSettings}
+                    disabled={!onExportSettings}
+                    className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white/80 hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                    导出配置
+                </button>
+                <button
+                    type="button"
+                    onClick={handleClickImport}
+                    disabled={!onImportSettings}
+                    className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white/80 hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                    导入配置
+                </button>
+                <input
+                    ref={importInputRef}
+                    type="file"
+                    accept="application/json"
+                    className="hidden"
+                    onChange={handleImportFileChange}
+                />
+            </div>
         </section>
 
       </div>

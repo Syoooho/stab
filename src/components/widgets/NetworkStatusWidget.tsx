@@ -3,7 +3,16 @@ import { Wifi, Globe, Server, Link, RotateCw } from 'lucide-react';
 
 interface ExtendedNetworkStatus extends NetworkStatus {
     refresh?: () => void;
+    isChecking?: boolean;
 }
+
+const LoadingDots = () => (
+  <span className="inline-flex items-center gap-1">
+    <span className="w-1 h-1 rounded-full bg-white/30 animate-pulse" style={{ animationDelay: '0ms' }} />
+    <span className="w-1 h-1 rounded-full bg-white/30 animate-pulse" style={{ animationDelay: '120ms' }} />
+    <span className="w-1 h-1 rounded-full bg-white/30 animate-pulse" style={{ animationDelay: '240ms' }} />
+  </span>
+);
 
 export const NetworkStatusWidget = ({ status }: { status: ExtendedNetworkStatus }) => {
   const getStatusColor = (isConnected: boolean, latency?: number) => {
@@ -21,57 +30,65 @@ export const NetworkStatusWidget = ({ status }: { status: ExtendedNetworkStatus 
 
   return (
     <div className="glass p-4 rounded-xl h-32 flex flex-col justify-between relative group">
-      <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-white/70">网络状态</h3>
-          {status.refresh && (
-              <button 
-                onClick={status.refresh}
-                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded-full"
-                title="立即检测"
-              >
-                  <RotateCw className="w-3 h-3 text-white/50" />
-              </button>
-          )}
-      </div>
-      
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
+      <div className={`flex flex-col h-full ${status.isChecking ? 'opacity-70' : ''}`}>
+        <div className="flex items-center justify-between flex-1">
            <div className="flex items-center gap-2 text-xs">
              <Server className="w-3 h-3" /> 内网
            </div>
            <div className="flex items-center gap-2">
-               <span className="text-[10px] text-white/30">{getLatencyText(status.latencies?.internal)}</span>
-               <div className={`w-2 h-2 rounded-full ${getStatusColor(status.internal, status.latencies?.internal)}`} />
+               <span className="text-[10px] text-white/30 tabular-nums">
+                 {status.isChecking ? <LoadingDots /> : getLatencyText(status.latencies?.internal)}
+               </span>
+               <div className={`w-2 h-2 rounded-full ${getStatusColor(status.internal, status.latencies?.internal)} ${status.isChecking ? 'animate-pulse' : ''}`} />
            </div>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-1">
            <div className="flex items-center gap-2 text-xs">
              <Wifi className="w-3 h-3" /> 组网
            </div>
            <div className="flex items-center gap-2">
-               <span className="text-[10px] text-white/30">{getLatencyText(status.latencies?.mesh)}</span>
-               <div className={`w-2 h-2 rounded-full ${getStatusColor(status.mesh, status.latencies?.mesh)}`} />
+               <span className="text-[10px] text-white/30 tabular-nums">
+                 {status.isChecking ? <LoadingDots /> : getLatencyText(status.latencies?.mesh)}
+               </span>
+               <div className={`w-2 h-2 rounded-full ${getStatusColor(status.mesh, status.latencies?.mesh)} ${status.isChecking ? 'animate-pulse' : ''}`} />
            </div>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-1">
            <div className="flex items-center gap-2 text-xs">
              <Link className="w-3 h-3" /> FRP
            </div>
            <div className="flex items-center gap-2">
-               <span className="text-[10px] text-white/30">{getLatencyText(status.latencies?.frp)}</span>
-               <div className={`w-2 h-2 rounded-full ${getStatusColor(status.frp, status.latencies?.frp)}`} />
+               <span className="text-[10px] text-white/30 tabular-nums">
+                 {status.isChecking ? <LoadingDots /> : getLatencyText(status.latencies?.frp)}
+               </span>
+               <div className={`w-2 h-2 rounded-full ${getStatusColor(status.frp, status.latencies?.frp)} ${status.isChecking ? 'animate-pulse' : ''}`} />
            </div>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-1">
            <div className="flex items-center gap-2 text-xs">
              <Globe className="w-3 h-3" /> 公网
            </div>
            <div className="flex items-center gap-2">
-               <span className="text-[10px] text-white/30">{getLatencyText(status.latencies?.public)}</span>
-               <div className={`w-2 h-2 rounded-full ${getStatusColor(status.public, status.latencies?.public)}`} />
+               <span className="text-[10px] text-white/30 tabular-nums">
+                 {status.isChecking ? <LoadingDots /> : getLatencyText(status.latencies?.public)}
+               </span>
+               <div className={`w-2 h-2 rounded-full ${getStatusColor(status.public, status.latencies?.public)} ${status.isChecking ? 'animate-pulse' : ''}`} />
            </div>
         </div>
       </div>
+
+      {status.refresh && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
+          <button
+            type="button"
+            onClick={status.refresh}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/15 text-white/90 text-sm font-medium hover:bg-white/15 hover:border-white/25 transition-colors backdrop-blur-md"
+          >
+            <RotateCw className={`w-4 h-4 ${status.isChecking ? 'animate-spin' : ''}`} />
+            立即检测
+          </button>
+        </div>
+      )}
     </div>
   );
 };

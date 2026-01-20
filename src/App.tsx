@@ -74,6 +74,40 @@ function App() {
     // Logic moved to WallpaperSidebar or manual trigger
   }, []);
 
+  const handleExportSettings = () => {
+      const payload = {
+          schema: 'stab-settings-v1',
+          exportedAt: new Date().toISOString(),
+          data: {
+              wallpaper,
+              apps,
+              systemConfig,
+              widgets
+          }
+      };
+
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `stab-settings-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+  };
+
+  const handleImportSettings = (input: unknown) => {
+      if (!input || typeof input !== 'object') return;
+      const anyInput = input as any;
+      const data = anyInput.data ?? anyInput;
+
+      if (data?.wallpaper) setWallpaper(data.wallpaper);
+      if (Array.isArray(data?.apps)) setApps(data.apps);
+      if (data?.systemConfig) setSystemConfig(data.systemConfig);
+      if (Array.isArray(data?.widgets)) setWidgets(data.widgets);
+  };
+
   // Context Menu State
   const [contextMenu, setContextMenu] = useState<{
       x: number;
@@ -270,6 +304,7 @@ function App() {
             onClose={handleCloseModal} 
             onAdd={handleSaveApp} 
             initialData={editingApp}
+            systemConfig={systemConfig}
         />
       </main>
 
@@ -286,6 +321,8 @@ function App() {
         onClose={() => setIsSettingsSidebarOpen(false)} 
         config={systemConfig}
         onChange={setSystemConfig}
+        onExportSettings={handleExportSettings}
+        onImportSettings={handleImportSettings}
       />
       
       {/* Modals */}

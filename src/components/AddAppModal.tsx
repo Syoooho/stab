@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus } from 'lucide-react';
-import type { App } from '../types';
+import type { App, SystemConfig } from '../types';
 import { fetchAndCacheIcon } from '../utils/image';
 
 interface AddAppModalProps {
@@ -9,32 +9,76 @@ interface AddAppModalProps {
   onClose: () => void;
   onAdd: (app: App) => void;
   initialData?: App | null;
+  systemConfig?: SystemConfig;
 }
 
 const PRESETS = [
-    { name: 'ChatGPT', url: 'https://chat.openai.com', icon: 'https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg' },
-    { name: 'Bilibili', url: 'https://www.bilibili.com', icon: 'https://www.bilibili.com/favicon.ico' },
-    { name: 'Vercel', url: 'https://vercel.com', icon: 'https://assets.vercel.com/image/upload/front/favicon/vercel/180x180.png' },
-    { name: 'Figma', url: 'https://www.figma.com', icon: 'https://static.figma.com/app/icon/1/icon-192.png' },
-    { name: 'Notion', url: 'https://www.notion.so', icon: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png' },
-    { name: '淘宝', url: 'https://www.taobao.com', icon: 'https://img.alicdn.com/tps/i3/T1OjaVFl4dXXa.JOZB-114-114.png' },
-    { name: '京东', url: 'https://www.jd.com', icon: 'https://www.jd.com/favicon.ico' },
-    { name: '知乎', url: 'https://www.zhihu.com', icon: 'https://static.zhihu.com/heifetz/assets/apple-touch-icon-152.6c82272f.png' },
-    { name: '微博', url: 'https://weibo.com', icon: 'https://weibo.com/favicon.ico' },
-    { name: '百度', url: 'https://www.baidu.com', icon: 'https://www.baidu.com/favicon.ico' },
-    { name: '小红书', url: 'https://www.xiaohongshu.com', icon: 'https://www.xiaohongshu.com/favicon.ico' },
-    { name: '豆瓣', url: 'https://www.douban.com', icon: 'https://img3.doubanio.com/favicon.ico' },
-    { name: '腾讯视频', url: 'https://v.qq.com', icon: 'https://v.qq.com/favicon.ico' },
-    { name: '爱奇艺', url: 'https://www.iqiyi.com', icon: 'https://www.iqiyi.com/favicon.ico' },
-    { name: '优酷', url: 'https://www.youku.com', icon: 'https://www.youku.com/favicon.ico' },
-    { name: 'GitHub', url: 'https://github.com', icon: 'https://github.githubassets.com/favicons/favicon.png' },
-    { name: 'GitLab', url: 'https://gitlab.com', icon: 'https://about.gitlab.com/images/press/press-kit-icon.svg' },
-    { name: 'Google', url: 'https://google.com', icon: 'https://www.google.com/favicon.ico' },
-    { name: 'Twitter', url: 'https://twitter.com', icon: 'https://abs.twimg.com/icons/apple-touch-icon-192x192.png' },
-    { name: 'YouTube', url: 'https://youtube.com', icon: 'https://www.youtube.com/s/desktop/10c3b063/img/favicon.ico' },
+    // 一、工具效率类
+    { name: 'Canva 可画', url: 'https://www.canva.cn/', icon: 'https://www.google.com/s2/favicons?domain=canva.cn&sz=128' },
+    { name: 'ProcessOn', url: 'https://www.processon.com/', icon: 'https://www.google.com/s2/favicons?domain=processon.com&sz=128' },
+    { name: '石墨文档', url: 'https://shimo.im/', icon: 'https://www.google.com/s2/favicons?domain=shimo.im&sz=128' },
+    { name: '天若 OCR', url: 'https://tianruoocr.cn/', icon: 'https://www.google.com/s2/favicons?domain=tianruoocr.cn&sz=128' },
+    { name: '小恐龙办公', url: 'https://www.kokojia.com/', icon: 'https://www.google.com/s2/favicons?domain=kokojia.com&sz=128' },
+    { name: '在线时钟', url: 'https://www.onlineclock.net/', icon: 'https://www.google.com/s2/favicons?domain=onlineclock.net&sz=128' },
+    { name: '草料二维码', url: 'https://cli.im/', icon: 'https://www.google.com/s2/favicons?domain=cli.im&sz=128' },
+    { name: 'iLovePDF', url: 'https://www.ilovepdf.com/', icon: 'https://www.google.com/s2/favicons?domain=ilovepdf.com&sz=128' },
+
+    // 二、学习资讯类
+    { name: '知乎', url: 'https://www.zhihu.com/', icon: 'https://www.google.com/s2/favicons?domain=zhihu.com&sz=128' },
+    { name: '哔哩哔哩', url: 'https://www.bilibili.com/', icon: 'https://www.google.com/s2/favicons?domain=bilibili.com&sz=128' },
+    { name: '慕课网', url: 'https://www.imooc.com/', icon: 'https://www.google.com/s2/favicons?domain=imooc.com&sz=128' },
+    { name: '网易云课堂', url: 'https://study.163.com/', icon: 'https://www.google.com/s2/favicons?domain=study.163.com&sz=128' },
+    { name: '36 氪', url: 'https://36kr.com/', icon: 'https://www.google.com/s2/favicons?domain=36kr.com&sz=128' },
+    { name: '虎嗅网', url: 'https://www.huxiu.com/', icon: 'https://www.google.com/s2/favicons?domain=huxiu.com&sz=128' },
+    { name: '得到', url: 'https://www.dedao.cn/', icon: 'https://www.google.com/s2/favicons?domain=dedao.cn&sz=128' },
+    { name: '豆瓣读书', url: 'https://book.douban.com/', icon: 'https://www.google.com/s2/favicons?domain=book.douban.com&sz=128' },
+
+    // 三、设计创作类
+    { name: '站酷', url: 'https://www.zcool.com.cn/', icon: 'https://www.google.com/s2/favicons?domain=zcool.com.cn&sz=128' },
+    { name: '花瓣网', url: 'https://huaban.com/', icon: 'https://www.google.com/s2/favicons?domain=huaban.com&sz=128' },
+    { name: '千库网', url: 'https://www.588ku.com/', icon: 'https://www.google.com/s2/favicons?domain=588ku.com&sz=128' },
+    { name: 'Freepik', url: 'https://www.freepik.com/', icon: 'https://www.google.com/s2/favicons?domain=freepik.com&sz=128' },
+    { name: 'Behance', url: 'https://www.behance.net/', icon: 'https://www.google.com/s2/favicons?domain=behance.net&sz=128' },
+    { name: 'Dribbble', url: 'https://dribbble.com/', icon: 'https://www.google.com/s2/favicons?domain=dribbble.com&sz=128' },
+    { name: '字魂网', url: 'https://www.izihun.com/', icon: 'https://www.google.com/s2/favicons?domain=izihun.com&sz=128' },
+    { name: '创客贴', url: 'https://www.chuangkit.com/', icon: 'https://www.google.com/s2/favicons?domain=chuangkit.com&sz=128' },
+
+    // 四、开发技术类
+    { name: 'GitHub', url: 'https://github.com/', icon: 'https://www.google.com/s2/favicons?domain=github.com&sz=128' },
+    { name: 'StackOverflow', url: 'https://stackoverflow.com/', icon: 'https://www.google.com/s2/favicons?domain=stackoverflow.com&sz=128' },
+    { name: '菜鸟教程', url: 'https://www.runoob.com/', icon: 'https://www.google.com/s2/favicons?domain=runoob.com&sz=128' },
+    { name: 'MDN', url: 'https://developer.mozilla.org/zh-CN/', icon: 'https://www.google.com/s2/favicons?domain=developer.mozilla.org&sz=128' },
+    { name: '掘金', url: 'https://juejin.cn/', icon: 'https://www.google.com/s2/favicons?domain=juejin.cn&sz=128' },
+    { name: 'LeetCode', url: 'https://leetcode.cn/', icon: 'https://www.google.com/s2/favicons?domain=leetcode.cn&sz=128' },
+    { name: 'DockerHub', url: 'https://hub.docker.com/', icon: 'https://www.google.com/s2/favicons?domain=hub.docker.com&sz=128' },
+    { name: '阿里云开发者', url: 'https://developer.aliyun.com/', icon: 'https://www.google.com/s2/favicons?domain=developer.aliyun.com&sz=128' },
+
+    // 五、办公协作类
+    { name: '钉钉', url: 'https://www.dingtalk.com/', icon: 'https://www.google.com/s2/favicons?domain=dingtalk.com&sz=128' },
+    { name: '企业微信', url: 'https://work.weixin.qq.com/', icon: 'https://www.google.com/s2/favicons?domain=work.weixin.qq.com&sz=128' },
+    { name: '飞书', url: 'https://www.larksuite.com/', icon: 'https://www.google.com/s2/favicons?domain=larksuite.com&sz=128' },
+    { name: '腾讯会议', url: 'https://meeting.tencent.com/', icon: 'https://www.google.com/s2/favicons?domain=meeting.tencent.com&sz=128' },
+    { name: '金山文档', url: 'https://kdocs.cn/', icon: 'https://www.google.com/s2/favicons?domain=kdocs.cn&sz=128' },
+    { name: 'Trello', url: 'https://trello.com/', icon: 'https://www.google.com/s2/favicons?domain=trello.com&sz=128' },
+    { name: 'Notion', url: 'https://www.notion.so/', icon: 'https://www.google.com/s2/favicons?domain=notion.so&sz=128' },
+
+    // 六、视频类
+    { name: '腾讯视频', url: 'https://v.qq.com/', icon: 'https://www.google.com/s2/favicons?domain=v.qq.com&sz=128' },
+    { name: '爱奇艺', url: 'https://www.iqiyi.com/', icon: 'https://www.google.com/s2/favicons?domain=iqiyi.com&sz=128' },
+    { name: '优酷', url: 'https://youku.com/', icon: 'https://www.google.com/s2/favicons?domain=youku.com&sz=128' },
+    { name: 'YouTube', url: 'https://www.youtube.com/', icon: 'https://www.google.com/s2/favicons?domain=youtube.com&sz=128' },
+    { name: '西瓜视频', url: 'https://www.ixigua.com/', icon: 'https://www.google.com/s2/favicons?domain=ixigua.com&sz=128' },
+    { name: '央视网', url: 'https://tv.cctv.com/', icon: 'https://www.google.com/s2/favicons?domain=tv.cctv.com&sz=128' },
+
+    // 七、音乐类
+    { name: '网易云音乐', url: 'https://music.163.com/', icon: 'https://www.google.com/s2/favicons?domain=music.163.com&sz=128' },
+    { name: 'QQ 音乐', url: 'https://y.qq.com/', icon: 'https://www.google.com/s2/favicons?domain=y.qq.com&sz=128' },
+    { name: '酷狗音乐', url: 'https://www.kugou.com/', icon: 'https://www.google.com/s2/favicons?domain=kugou.com&sz=128' },
+    { name: 'Spotify', url: 'https://www.spotify.com/', icon: 'https://www.google.com/s2/favicons?domain=spotify.com&sz=128' },
+    { name: '喜马拉雅', url: 'https://www.ximalaya.com/', icon: 'https://www.google.com/s2/favicons?domain=ximalaya.com&sz=128' },
 ];
 
-export const AddAppModal = ({ isOpen, onClose, onAdd, initialData }: AddAppModalProps) => {
+export const AddAppModal = ({ isOpen, onClose, onAdd, initialData, systemConfig }: AddAppModalProps) => {
   const [mode, setMode] = useState<'presets' | 'custom'>('presets');
   
   // Custom mode state
@@ -44,6 +88,12 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData }: AddAppModal
   const [meshUrl, setMeshUrl] = useState('');
   const [frpUrl, setFrpUrl] = useState('');
   const [iconUrl, setIconUrl] = useState('');
+  const [useInternalService, setUseInternalService] = useState(false);
+  const [useMeshService, setUseMeshService] = useState(false);
+  const [useFrpService, setUseFrpService] = useState(false);
+  const [internalPort, setInternalPort] = useState('');
+  const [meshPort, setMeshPort] = useState('');
+  const [frpPort, setFrpPort] = useState('');
 
   // Reset or fill data when opening
   useEffect(() => {
@@ -56,6 +106,12 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData }: AddAppModal
               setMeshUrl(initialData.urls.mesh || '');
               setFrpUrl(initialData.urls.frp || '');
               setIconUrl(initialData.icon);
+              setUseInternalService(false);
+              setUseMeshService(false);
+              setUseFrpService(false);
+              setInternalPort('');
+              setMeshPort('');
+              setFrpPort('');
           } else {
               setMode('presets');
               reset();
@@ -63,10 +119,59 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData }: AddAppModal
       }
   }, [isOpen, initialData]);
 
+  const getServiceBase = (serviceUrl?: string) => {
+      if (!serviceUrl) return null;
+      try {
+          const normalized = serviceUrl.startsWith('http') ? serviceUrl : `http://${serviceUrl}`;
+          const u = new URL(normalized);
+          return { protocol: u.protocol, hostname: u.hostname };
+      } catch {
+          return null;
+      }
+  };
+
+  const getPortFromUrl = (urlStr: string) => {
+      if (!urlStr) return '';
+      try {
+          const normalized = urlStr.startsWith('http') ? urlStr : `http://${urlStr}`;
+          const u = new URL(normalized);
+          return u.port || '';
+      } catch {
+          return '';
+      }
+  };
+
+  const buildUrlFromService = (serviceUrl: string | undefined, port: string) => {
+      const base = getServiceBase(serviceUrl);
+      if (!base) return '';
+      const p = port.trim();
+      if (!p) return `${base.protocol}//${base.hostname}`;
+      return `${base.protocol}//${base.hostname}:${p}`;
+  };
+
+  const getServiceDisplay = (serviceUrl?: string) => {
+      const base = getServiceBase(serviceUrl);
+      if (!base) return '';
+      return `${base.protocol}//${base.hostname}`;
+  };
+
+  const getPrimaryUrlForAutoFill = () => {
+      if (publicUrl) return publicUrl;
+      if (internalUrl) return internalUrl;
+      if (meshUrl) return meshUrl;
+      if (frpUrl) return frpUrl;
+      if (useInternalService) return systemConfig?.internalCheckUrl || '';
+      if (useMeshService) return systemConfig?.meshCheckUrl || '';
+      if (useFrpService) return systemConfig?.frpCheckUrl || '';
+      return '';
+  };
+
   const handleIconError = () => {
       // If the current icon fails (e.g., Google service fails or returns default), try fallback
       if (iconUrl.includes('google.com/s2/favicons')) {
-           const urlStr = publicUrl.startsWith('http') ? publicUrl : `https://${publicUrl}`; 
+           const primary = getPrimaryUrlForAutoFill();
+           if (!primary) return;
+           const urlStr = primary.startsWith('http') ? primary : `https://${primary}`; 
            try {
                const url = new URL(urlStr);
                // Fallback to direct favicon.ico
@@ -77,14 +182,15 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData }: AddAppModal
       }
   };
 
-  const fetchIcon = (strategy: 'google' | 'ico' | 'chrome') => {
-      if (!publicUrl) return;
+  const fetchIcon = (strategy: 'google' | 'ico' | 'chrome', urlOverride?: string) => {
+      const targetInput = urlOverride || getPrimaryUrlForAutoFill();
+      if (!targetInput) return;
 
       try {
-        let urlStr = publicUrl;
+        let urlStr = targetInput;
         if (!urlStr.startsWith('http')) {
-            const isIP = /^(\d{1,3}\.){3}\d{1,3}(:\d+)?$/.test(publicUrl);
-            urlStr = isIP ? `http://${publicUrl}` : `https://${publicUrl}`;
+            const isIP = /^(\d{1,3}\.){3}\d{1,3}(:\d+)?$/.test(targetInput);
+            urlStr = isIP ? `http://${targetInput}` : `https://${targetInput}`;
         }
         
         const url = new URL(urlStr);
@@ -109,16 +215,18 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData }: AddAppModal
 
   // ... (keep useEffect for auto fetch but make it use default google strategy)
   useEffect(() => {
-    if (!publicUrl || mode !== 'custom' || (initialData && initialData.urls.public === publicUrl)) return;
+    const primaryUrl = getPrimaryUrlForAutoFill();
+    if (!primaryUrl || mode !== 'custom') return;
+    if (initialData && initialData.urls.public === publicUrl && publicUrl) return;
     
     const timer = setTimeout(() => {
         // Default auto-fetch uses Google
-        fetchIcon('google');
+        fetchIcon('google', primaryUrl);
         
         // Also auto-fill name
         if (!name) {
              try {
-                let urlStr = publicUrl.startsWith('http') ? publicUrl : `https://${publicUrl}`;
+                let urlStr = primaryUrl.startsWith('http') ? primaryUrl : `https://${primaryUrl}`;
                 const domain = new URL(urlStr).hostname;
                 const autoName = domain.split('.')[0];
                 const isIP = /^(\d{1,3}\.){3}\d{1,3}$/.test(domain);
@@ -128,11 +236,20 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData }: AddAppModal
     }, 500); 
     
     return () => clearTimeout(timer);
-  }, [publicUrl, name, mode, initialData]);
+  }, [publicUrl, internalUrl, meshUrl, frpUrl, useInternalService, useMeshService, useFrpService, systemConfig, name, mode, initialData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || (!publicUrl && !internalUrl && !meshUrl && !frpUrl)) return;
+    const hasAnyUrl = Boolean(
+        publicUrl ||
+        internalUrl ||
+        meshUrl ||
+        frpUrl ||
+        (useInternalService && systemConfig?.internalCheckUrl) ||
+        (useMeshService && systemConfig?.meshCheckUrl) ||
+        (useFrpService && systemConfig?.frpCheckUrl)
+    );
+    if (!name || !hasAnyUrl) return;
 
     // Try to cache icon if it's a remote URL
     let finalIcon = iconUrl;
@@ -142,15 +259,27 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData }: AddAppModal
         finalIcon = await fetchAndCacheIcon(iconUrl);
     }
 
+    const resolvedInternalUrl = useInternalService
+        ? buildUrlFromService(systemConfig?.internalCheckUrl, internalPort || getPortFromUrl(internalUrl))
+        : (internalUrl ? (internalUrl.startsWith('http') ? internalUrl : `http://${internalUrl}`) : undefined);
+
+    const resolvedMeshUrl = useMeshService
+        ? buildUrlFromService(systemConfig?.meshCheckUrl, meshPort || getPortFromUrl(meshUrl))
+        : (meshUrl ? (meshUrl.startsWith('http') ? meshUrl : `http://${meshUrl}`) : undefined);
+
+    const resolvedFrpUrl = useFrpService
+        ? buildUrlFromService(systemConfig?.frpCheckUrl, frpPort || getPortFromUrl(frpUrl))
+        : (frpUrl ? (frpUrl.startsWith('http') ? frpUrl : `http://${frpUrl}`) : undefined);
+
     const newApp: App = {
       id: initialData?.id || crypto.randomUUID(),
       name,
       icon: finalIcon || `https://ui-avatars.com/api/?name=${name}&background=random`,
       urls: {
         public: publicUrl ? (publicUrl.startsWith('http') ? publicUrl : `https://${publicUrl}`) : undefined,
-        internal: internalUrl ? (internalUrl.startsWith('http') ? internalUrl : `http://${internalUrl}`) : undefined,
-        mesh: meshUrl ? (meshUrl.startsWith('http') ? meshUrl : `http://${meshUrl}`) : undefined,
-        frp: frpUrl ? (frpUrl.startsWith('http') ? frpUrl : `http://${frpUrl}`) : undefined
+        internal: resolvedInternalUrl,
+        mesh: resolvedMeshUrl,
+        frp: resolvedFrpUrl
       }
     };
 
@@ -165,6 +294,12 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData }: AddAppModal
       setMeshUrl('');
       setFrpUrl('');
       setIconUrl('');
+      setUseInternalService(false);
+      setUseMeshService(false);
+      setUseFrpService(false);
+      setInternalPort('');
+      setMeshPort('');
+      setFrpPort('');
   }
 
   const handleQuickAdd = (preset: { name: string, url: string, icon: string }) => {
@@ -230,11 +365,11 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData }: AddAppModal
               ) : (
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                      <label className="block text-xs font-medium text-white/50 mb-1">公网地址 (自动获取图标)</label>
+                      <label className="block text-xs font-medium text-white/50 mb-1">公网地址（可选，用于自动获取图标）</label>
                       <input
                         type="text"
                         className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30"
-                        placeholder="https://github.com"
+                        placeholder="https://example.com"
                         value={publicUrl}
                         onChange={(e) => setPublicUrl(e.target.value)}
                         autoFocus
@@ -243,36 +378,138 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData }: AddAppModal
                     
                     <div className="grid grid-cols-2 gap-4">
                          <div>
-                          <label className="block text-xs font-medium text-white/50 mb-1">内网地址</label>
-                          <input
-                            type="text"
-                            className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30"
-                            placeholder="http://192.168.x.x"
-                            value={internalUrl}
-                            onChange={(e) => setInternalUrl(e.target.value)}
-                          />
+                          <div className="flex items-center justify-between mb-1">
+                            <label className="block text-xs font-medium text-white/50">内网地址</label>
+                            <button
+                              type="button"
+                              disabled={!systemConfig?.internalCheckUrl}
+                              onClick={() => {
+                                setUseInternalService(v => {
+                                  const next = !v;
+                                  if (next) setInternalPort(getPortFromUrl(internalUrl));
+                                  return next;
+                                });
+                              }}
+                              className={`text-xs px-2 py-1 rounded border ${useInternalService ? 'bg-white text-black border-white' : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10'} ${!systemConfig?.internalCheckUrl ? 'opacity-30 cursor-not-allowed' : ''}`}
+                            >
+                              跟随服务地址
+                            </button>
+                          </div>
+                          {useInternalService ? (
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                readOnly
+                                value={getServiceDisplay(systemConfig?.internalCheckUrl)}
+                                className="flex-1 px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-white/50 focus:outline-none"
+                              />
+                              <input
+                                type="text"
+                                value={internalPort}
+                                onChange={(e) => setInternalPort(e.target.value)}
+                                className="w-24 px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30"
+                                placeholder="端口"
+                              />
+                            </div>
+                          ) : (
+                            <input
+                              type="text"
+                              className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30"
+                              placeholder="http://192.168.1.2:8080"
+                              value={internalUrl}
+                              onChange={(e) => setInternalUrl(e.target.value)}
+                            />
+                          )}
                         </div>
                         <div>
-                          <label className="block text-xs font-medium text-white/50 mb-1">组网地址</label>
-                          <input
-                            type="text"
-                            className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30"
-                            placeholder="http://100.x.x.x"
-                            value={meshUrl}
-                            onChange={(e) => setMeshUrl(e.target.value)}
-                          />
+                          <div className="flex items-center justify-between mb-1">
+                            <label className="block text-xs font-medium text-white/50">组网地址</label>
+                            <button
+                              type="button"
+                              disabled={!systemConfig?.meshCheckUrl}
+                              onClick={() => {
+                                setUseMeshService(v => {
+                                  const next = !v;
+                                  if (next) setMeshPort(getPortFromUrl(meshUrl));
+                                  return next;
+                                });
+                              }}
+                              className={`text-xs px-2 py-1 rounded border ${useMeshService ? 'bg-white text-black border-white' : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10'} ${!systemConfig?.meshCheckUrl ? 'opacity-30 cursor-not-allowed' : ''}`}
+                            >
+                              跟随服务地址
+                            </button>
+                          </div>
+                          {useMeshService ? (
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                readOnly
+                                value={getServiceDisplay(systemConfig?.meshCheckUrl)}
+                                className="flex-1 px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-white/50 focus:outline-none"
+                              />
+                              <input
+                                type="text"
+                                value={meshPort}
+                                onChange={(e) => setMeshPort(e.target.value)}
+                                className="w-24 px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30"
+                                placeholder="端口"
+                              />
+                            </div>
+                          ) : (
+                            <input
+                              type="text"
+                              className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30"
+                              placeholder="http://100.64.0.2:8080"
+                              value={meshUrl}
+                              onChange={(e) => setMeshUrl(e.target.value)}
+                            />
+                          )}
                         </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-white/50 mb-1">FRP 地址</label>
-                      <input
-                        type="text"
-                        className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30"
-                        placeholder="http://frp.example.com"
-                        value={frpUrl}
-                        onChange={(e) => setFrpUrl(e.target.value)}
-                      />
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs font-medium text-white/50">FRP 地址</label>
+                        <button
+                          type="button"
+                          disabled={!systemConfig?.frpCheckUrl}
+                          onClick={() => {
+                            setUseFrpService(v => {
+                              const next = !v;
+                              if (next) setFrpPort(getPortFromUrl(frpUrl));
+                              return next;
+                            });
+                          }}
+                          className={`text-xs px-2 py-1 rounded border ${useFrpService ? 'bg-white text-black border-white' : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10'} ${!systemConfig?.frpCheckUrl ? 'opacity-30 cursor-not-allowed' : ''}`}
+                        >
+                          跟随服务地址
+                        </button>
+                      </div>
+                      {useFrpService ? (
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            readOnly
+                            value={getServiceDisplay(systemConfig?.frpCheckUrl)}
+                            className="flex-1 px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-white/50 focus:outline-none"
+                          />
+                          <input
+                            type="text"
+                            value={frpPort}
+                            onChange={(e) => setFrpPort(e.target.value)}
+                            className="w-24 px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30"
+                            placeholder="端口"
+                          />
+                        </div>
+                      ) : (
+                        <input
+                          type="text"
+                          className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30"
+                          placeholder="https://your-domain.com:8080"
+                          value={frpUrl}
+                          onChange={(e) => setFrpUrl(e.target.value)}
+                        />
+                      )}
                     </div>
 
                     <div className="flex gap-4 items-end">
