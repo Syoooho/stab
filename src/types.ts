@@ -61,6 +61,13 @@ export interface SystemConfig {
   countdownTarget: string; // ISO Date string
   countdownLabel: string;
   quickCopyItems: QuickCopyItem[];
+  webDav?: WebDavConfig;
+}
+
+export interface WebDavConfig {
+    url: string;
+    username?: string;
+    password?: string;
 }
 
 export type WidgetType = 'network' | 'countdown' | 'weather' | 'quickCopy';

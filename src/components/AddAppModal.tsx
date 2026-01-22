@@ -14,68 +14,68 @@ interface AddAppModalProps {
 
 const PRESETS = [
     // 一、工具效率类
-    { name: 'Canva 可画', url: 'https://www.canva.cn/', icon: 'https://www.google.com/s2/favicons?domain=canva.cn&sz=128' },
-    { name: 'ProcessOn', url: 'https://www.processon.com/', icon: 'https://www.google.com/s2/favicons?domain=processon.com&sz=128' },
-    { name: '石墨文档', url: 'https://shimo.im/', icon: 'https://www.google.com/s2/favicons?domain=shimo.im&sz=128' },
-    { name: '天若 OCR', url: 'https://tianruoocr.cn/', icon: 'https://www.google.com/s2/favicons?domain=tianruoocr.cn&sz=128' },
-    { name: '小恐龙办公', url: 'https://www.kokojia.com/', icon: 'https://www.google.com/s2/favicons?domain=kokojia.com&sz=128' },
-    { name: '在线时钟', url: 'https://www.onlineclock.net/', icon: 'https://www.google.com/s2/favicons?domain=onlineclock.net&sz=128' },
-    { name: '草料二维码', url: 'https://cli.im/', icon: 'https://www.google.com/s2/favicons?domain=cli.im&sz=128' },
-    { name: 'iLovePDF', url: 'https://www.ilovepdf.com/', icon: 'https://www.google.com/s2/favicons?domain=ilovepdf.com&sz=128' },
+    { name: 'Canva 可画', url: 'https://www.canva.cn/', icon: 'https://api.iowen.cn/favicon/canva.cn.png' },
+    { name: 'ProcessOn', url: 'https://www.processon.com/', icon: 'https://api.iowen.cn/favicon/processon.com.png' },
+    { name: '石墨文档', url: 'https://shimo.im/', icon: 'https://api.iowen.cn/favicon/shimo.im.png' },
+    { name: '天若 OCR', url: 'https://tianruoocr.cn/', icon: 'https://api.iowen.cn/favicon/tianruoocr.cn.png' },
+    { name: '小恐龙办公', url: 'https://www.kokojia.com/', icon: 'https://api.iowen.cn/favicon/kokojia.com.png' },
+    { name: '在线时钟', url: 'https://www.onlineclock.net/', icon: 'https://api.iowen.cn/favicon/onlineclock.net.png' },
+    { name: '草料二维码', url: 'https://cli.im/', icon: 'https://api.iowen.cn/favicon/cli.im.png' },
+    { name: 'iLovePDF', url: 'https://www.ilovepdf.com/', icon: 'https://api.iowen.cn/favicon/ilovepdf.com.png' },
 
     // 二、学习资讯类
-    { name: '知乎', url: 'https://www.zhihu.com/', icon: 'https://www.google.com/s2/favicons?domain=zhihu.com&sz=128' },
-    { name: '哔哩哔哩', url: 'https://www.bilibili.com/', icon: 'https://www.google.com/s2/favicons?domain=bilibili.com&sz=128' },
-    { name: '慕课网', url: 'https://www.imooc.com/', icon: 'https://www.google.com/s2/favicons?domain=imooc.com&sz=128' },
-    { name: '网易云课堂', url: 'https://study.163.com/', icon: 'https://www.google.com/s2/favicons?domain=study.163.com&sz=128' },
-    { name: '36 氪', url: 'https://36kr.com/', icon: 'https://www.google.com/s2/favicons?domain=36kr.com&sz=128' },
-    { name: '虎嗅网', url: 'https://www.huxiu.com/', icon: 'https://www.google.com/s2/favicons?domain=huxiu.com&sz=128' },
-    { name: '得到', url: 'https://www.dedao.cn/', icon: 'https://www.google.com/s2/favicons?domain=dedao.cn&sz=128' },
-    { name: '豆瓣读书', url: 'https://book.douban.com/', icon: 'https://www.google.com/s2/favicons?domain=book.douban.com&sz=128' },
+    { name: '知乎', url: 'https://www.zhihu.com/', icon: 'https://api.iowen.cn/favicon/zhihu.com.png' },
+    { name: '哔哩哔哩', url: 'https://www.bilibili.com/', icon: 'https://api.iowen.cn/favicon/bilibili.com.png' },
+    { name: '慕课网', url: 'https://www.imooc.com/', icon: 'https://api.iowen.cn/favicon/imooc.com.png' },
+    { name: '网易云课堂', url: 'https://study.163.com/', icon: 'https://api.iowen.cn/favicon/study.163.com.png' },
+    { name: '36 氪', url: 'https://36kr.com/', icon: 'https://api.iowen.cn/favicon/36kr.com.png' },
+    { name: '虎嗅网', url: 'https://www.huxiu.com/', icon: 'https://api.iowen.cn/favicon/huxiu.com.png' },
+    { name: '得到', url: 'https://www.dedao.cn/', icon: 'https://api.iowen.cn/favicon/dedao.cn.png' },
+    { name: '豆瓣读书', url: 'https://book.douban.com/', icon: 'https://api.iowen.cn/favicon/book.douban.com.png' },
 
     // 三、设计创作类
-    { name: '站酷', url: 'https://www.zcool.com.cn/', icon: 'https://www.google.com/s2/favicons?domain=zcool.com.cn&sz=128' },
-    { name: '花瓣网', url: 'https://huaban.com/', icon: 'https://www.google.com/s2/favicons?domain=huaban.com&sz=128' },
-    { name: '千库网', url: 'https://www.588ku.com/', icon: 'https://www.google.com/s2/favicons?domain=588ku.com&sz=128' },
-    { name: 'Freepik', url: 'https://www.freepik.com/', icon: 'https://www.google.com/s2/favicons?domain=freepik.com&sz=128' },
-    { name: 'Behance', url: 'https://www.behance.net/', icon: 'https://www.google.com/s2/favicons?domain=behance.net&sz=128' },
-    { name: 'Dribbble', url: 'https://dribbble.com/', icon: 'https://www.google.com/s2/favicons?domain=dribbble.com&sz=128' },
-    { name: '字魂网', url: 'https://www.izihun.com/', icon: 'https://www.google.com/s2/favicons?domain=izihun.com&sz=128' },
-    { name: '创客贴', url: 'https://www.chuangkit.com/', icon: 'https://www.google.com/s2/favicons?domain=chuangkit.com&sz=128' },
+    { name: '站酷', url: 'https://www.zcool.com.cn/', icon: 'https://api.iowen.cn/favicon/zcool.com.cn.png' },
+    { name: '花瓣网', url: 'https://huaban.com/', icon: 'https://api.iowen.cn/favicon/huaban.com.png' },
+    { name: '千库网', url: 'https://www.588ku.com/', icon: 'https://api.iowen.cn/favicon/588ku.com.png' },
+    { name: 'Freepik', url: 'https://www.freepik.com/', icon: 'https://api.iowen.cn/favicon/freepik.com.png' },
+    { name: 'Behance', url: 'https://www.behance.net/', icon: 'https://api.iowen.cn/favicon/behance.net.png' },
+    { name: 'Dribbble', url: 'https://dribbble.com/', icon: 'https://api.iowen.cn/favicon/dribbble.com.png' },
+    { name: '字魂网', url: 'https://www.izihun.com/', icon: 'https://api.iowen.cn/favicon/izihun.com.png' },
+    { name: '创客贴', url: 'https://www.chuangkit.com/', icon: 'https://api.iowen.cn/favicon/chuangkit.com.png' },
 
     // 四、开发技术类
-    { name: 'GitHub', url: 'https://github.com/', icon: 'https://www.google.com/s2/favicons?domain=github.com&sz=128' },
-    { name: 'StackOverflow', url: 'https://stackoverflow.com/', icon: 'https://www.google.com/s2/favicons?domain=stackoverflow.com&sz=128' },
-    { name: '菜鸟教程', url: 'https://www.runoob.com/', icon: 'https://www.google.com/s2/favicons?domain=runoob.com&sz=128' },
-    { name: 'MDN', url: 'https://developer.mozilla.org/zh-CN/', icon: 'https://www.google.com/s2/favicons?domain=developer.mozilla.org&sz=128' },
-    { name: '掘金', url: 'https://juejin.cn/', icon: 'https://www.google.com/s2/favicons?domain=juejin.cn&sz=128' },
-    { name: 'LeetCode', url: 'https://leetcode.cn/', icon: 'https://www.google.com/s2/favicons?domain=leetcode.cn&sz=128' },
-    { name: 'DockerHub', url: 'https://hub.docker.com/', icon: 'https://www.google.com/s2/favicons?domain=hub.docker.com&sz=128' },
-    { name: '阿里云开发者', url: 'https://developer.aliyun.com/', icon: 'https://www.google.com/s2/favicons?domain=developer.aliyun.com&sz=128' },
+    { name: 'GitHub', url: 'https://github.com/', icon: 'https://api.iowen.cn/favicon/github.com.png' },
+    { name: 'StackOverflow', url: 'https://stackoverflow.com/', icon: 'https://api.iowen.cn/favicon/stackoverflow.com.png' },
+    { name: '菜鸟教程', url: 'https://www.runoob.com/', icon: 'https://api.iowen.cn/favicon/runoob.com.png' },
+    { name: 'MDN', url: 'https://developer.mozilla.org/zh-CN/', icon: 'https://api.iowen.cn/favicon/developer.mozilla.org.png' },
+    { name: '掘金', url: 'https://juejin.cn/', icon: 'https://api.iowen.cn/favicon/juejin.cn.png' },
+    { name: 'LeetCode', url: 'https://leetcode.cn/', icon: 'https://api.iowen.cn/favicon/leetcode.cn.png' },
+    { name: 'DockerHub', url: 'https://hub.docker.com/', icon: 'https://api.iowen.cn/favicon/hub.docker.com.png' },
+    { name: '阿里云开发者', url: 'https://developer.aliyun.com/', icon: 'https://api.iowen.cn/favicon/developer.aliyun.com.png' },
 
     // 五、办公协作类
-    { name: '钉钉', url: 'https://www.dingtalk.com/', icon: 'https://www.google.com/s2/favicons?domain=dingtalk.com&sz=128' },
-    { name: '企业微信', url: 'https://work.weixin.qq.com/', icon: 'https://www.google.com/s2/favicons?domain=work.weixin.qq.com&sz=128' },
-    { name: '飞书', url: 'https://www.larksuite.com/', icon: 'https://www.google.com/s2/favicons?domain=larksuite.com&sz=128' },
-    { name: '腾讯会议', url: 'https://meeting.tencent.com/', icon: 'https://www.google.com/s2/favicons?domain=meeting.tencent.com&sz=128' },
-    { name: '金山文档', url: 'https://kdocs.cn/', icon: 'https://www.google.com/s2/favicons?domain=kdocs.cn&sz=128' },
-    { name: 'Trello', url: 'https://trello.com/', icon: 'https://www.google.com/s2/favicons?domain=trello.com&sz=128' },
-    { name: 'Notion', url: 'https://www.notion.so/', icon: 'https://www.google.com/s2/favicons?domain=notion.so&sz=128' },
+    { name: '钉钉', url: 'https://www.dingtalk.com/', icon: 'https://api.iowen.cn/favicon/dingtalk.com.png' },
+    { name: '企业微信', url: 'https://work.weixin.qq.com/', icon: 'https://api.iowen.cn/favicon/work.weixin.qq.com.png' },
+    { name: '飞书', url: 'https://www.larksuite.com/', icon: 'https://api.iowen.cn/favicon/larksuite.com.png' },
+    { name: '腾讯会议', url: 'https://meeting.tencent.com/', icon: 'https://api.iowen.cn/favicon/meeting.tencent.com.png' },
+    { name: '金山文档', url: 'https://kdocs.cn/', icon: 'https://api.iowen.cn/favicon/kdocs.cn.png' },
+    { name: 'Trello', url: 'https://trello.com/', icon: 'https://api.iowen.cn/favicon/trello.com.png' },
+    { name: 'Notion', url: 'https://www.notion.so/', icon: 'https://api.iowen.cn/favicon/notion.so.png' },
 
     // 六、视频类
-    { name: '腾讯视频', url: 'https://v.qq.com/', icon: 'https://www.google.com/s2/favicons?domain=v.qq.com&sz=128' },
-    { name: '爱奇艺', url: 'https://www.iqiyi.com/', icon: 'https://www.google.com/s2/favicons?domain=iqiyi.com&sz=128' },
-    { name: '优酷', url: 'https://youku.com/', icon: 'https://www.google.com/s2/favicons?domain=youku.com&sz=128' },
-    { name: 'YouTube', url: 'https://www.youtube.com/', icon: 'https://www.google.com/s2/favicons?domain=youtube.com&sz=128' },
-    { name: '西瓜视频', url: 'https://www.ixigua.com/', icon: 'https://www.google.com/s2/favicons?domain=ixigua.com&sz=128' },
-    { name: '央视网', url: 'https://tv.cctv.com/', icon: 'https://www.google.com/s2/favicons?domain=tv.cctv.com&sz=128' },
+    { name: '腾讯视频', url: 'https://v.qq.com/', icon: 'https://api.iowen.cn/favicon/v.qq.com.png' },
+    { name: '爱奇艺', url: 'https://www.iqiyi.com/', icon: 'https://api.iowen.cn/favicon/iqiyi.com.png' },
+    { name: '优酷', url: 'https://youku.com/', icon: 'https://api.iowen.cn/favicon/youku.com.png' },
+    { name: 'YouTube', url: 'https://www.youtube.com/', icon: 'https://api.iowen.cn/favicon/youtube.com.png' },
+    { name: '西瓜视频', url: 'https://www.ixigua.com/', icon: 'https://api.iowen.cn/favicon/ixigua.com.png' },
+    { name: '央视网', url: 'https://tv.cctv.com/', icon: 'https://api.iowen.cn/favicon/tv.cctv.com.png' },
 
     // 七、音乐类
-    { name: '网易云音乐', url: 'https://music.163.com/', icon: 'https://www.google.com/s2/favicons?domain=music.163.com&sz=128' },
-    { name: 'QQ 音乐', url: 'https://y.qq.com/', icon: 'https://www.google.com/s2/favicons?domain=y.qq.com&sz=128' },
-    { name: '酷狗音乐', url: 'https://www.kugou.com/', icon: 'https://www.google.com/s2/favicons?domain=kugou.com&sz=128' },
-    { name: 'Spotify', url: 'https://www.spotify.com/', icon: 'https://www.google.com/s2/favicons?domain=spotify.com&sz=128' },
-    { name: '喜马拉雅', url: 'https://www.ximalaya.com/', icon: 'https://www.google.com/s2/favicons?domain=ximalaya.com&sz=128' },
+    { name: '网易云音乐', url: 'https://music.163.com/', icon: 'https://api.iowen.cn/favicon/music.163.com.png' },
+    { name: 'QQ 音乐', url: 'https://y.qq.com/', icon: 'https://api.iowen.cn/favicon/y.qq.com.png' },
+    { name: '酷狗音乐', url: 'https://www.kugou.com/', icon: 'https://api.iowen.cn/favicon/kugou.com.png' },
+    { name: 'Spotify', url: 'https://www.spotify.com/', icon: 'https://api.iowen.cn/favicon/spotify.com.png' },
+    { name: '喜马拉雅', url: 'https://www.ximalaya.com/', icon: 'https://api.iowen.cn/favicon/ximalaya.com.png' },
 ];
 
 export const AddAppModal = ({ isOpen, onClose, onAdd, initialData, systemConfig }: AddAppModalProps) => {
@@ -168,8 +168,8 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData, systemConfig 
   };
 
   const handleIconError = () => {
-      // If the current icon fails (e.g., Google service fails or returns default), try fallback
-      if (iconUrl.includes('google.com/s2/favicons')) {
+      // If the current icon fails (e.g., service fails or returns default), try fallback
+      if (iconUrl.includes('google.com/s2/favicons') || iconUrl.includes('duckduckgo.com') || iconUrl.includes('iowen.cn')) {
            const primary = getPrimaryUrlForAutoFill();
            if (!primary) return;
            const urlStr = primary.startsWith('http') ? primary : `https://${primary}`; 
@@ -183,7 +183,7 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData, systemConfig 
       }
   };
 
-  const fetchIcon = (strategy: 'google' | 'ico' | 'chrome', urlOverride?: string) => {
+  const fetchIcon = (strategy: 'google' | 'duckduckgo' | 'iowen' | 'ico' | 'chrome', urlOverride?: string) => {
       const targetInput = urlOverride || getPrimaryUrlForAutoFill();
       if (!targetInput) return;
 
@@ -199,6 +199,10 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData, systemConfig 
 
         if (strategy === 'google') {
              setIconUrl(`https://www.google.com/s2/favicons?domain=${domain}&sz=128`);
+        } else if (strategy === 'duckduckgo') {
+             setIconUrl(`https://icons.duckduckgo.com/ip3/${domain}.ico`);
+        } else if (strategy === 'iowen') {
+             setIconUrl(`https://api.iowen.cn/favicon/${domain}.png`);
         } else if (strategy === 'ico') {
              setIconUrl(`${url.origin}/favicon.ico`);
         } else if (strategy === 'chrome') {
@@ -207,7 +211,16 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData, systemConfig 
              // Note: This only works within the extension context to DISPLAY, 
              // it might not be fetchable via fetch() for caching without extra permissions.
              // But for <img> src it works fine.
-             setIconUrl(`chrome-extension://${chrome.runtime.id}/_favicon/?pageUrl=${encodeURIComponent(urlStr)}&size=64`);
+             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+             // @ts-ignore
+             if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                 // @ts-ignore
+                 setIconUrl(`chrome-extension://${chrome.runtime.id}/_favicon/?pageUrl=${encodeURIComponent(urlStr)}&size=64`);
+             } else {
+                 // Fallback if not in extension
+                 fetchIcon('iowen', urlOverride);
+             }
         }
       } catch (e) {
           // ignore
@@ -221,8 +234,12 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData, systemConfig 
     if (initialData && initialData.urls.public === publicUrl && publicUrl) return;
     
     const timer = setTimeout(() => {
-        // Default auto-fetch uses Google
-        fetchIcon('google', primaryUrl);
+        // Default auto-fetch
+        // In extension environment, try Chrome API first, otherwise Iowen
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const isExtension = typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id;
+        fetchIcon(isExtension ? 'chrome' : 'iowen', primaryUrl);
         
         // Also auto-fill name
         if (!name) {
@@ -317,11 +334,23 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData, systemConfig 
       setFrpPort('');
   }
 
+  const getPresetIcon = (preset: { url: string, icon: string }) => {
+      // In extension environment, try Chrome API first
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return `chrome-extension://${chrome.runtime.id}/_favicon/?pageUrl=${encodeURIComponent(preset.url)}&size=64`;
+      }
+      return preset.icon;
+  };
+
   const handleQuickAdd = (preset: { name: string, url: string, icon: string }) => {
       const newApp: App = {
           id: crypto.randomUUID(),
           name: preset.name,
-          icon: preset.icon,
+          icon: getPresetIcon(preset),
           urls: { public: preset.url }
       };
       onAdd(newApp);
@@ -387,7 +416,7 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData, systemConfig 
                                 onClick={() => handleQuickAdd(preset)}
                                 className="flex flex-col items-center justify-center p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 transition-all group"
                             >
-                                <img src={preset.icon} className="w-10 h-10 mb-2 rounded-lg object-contain group-hover:scale-110 transition-transform" />
+                                <img src={getPresetIcon(preset)} className="w-10 h-10 mb-2 rounded-lg object-contain group-hover:scale-110 transition-transform" />
                                 <span className="text-xs text-white/70">{preset.name}</span>
                             </button>
                         ))}
@@ -595,11 +624,11 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData, systemConfig 
                           <div className="flex gap-2">
                             <button 
                                 type="button"
-                                onClick={() => fetchIcon('google')}
+                                onClick={() => fetchIcon('iowen')}
                                 className="flex-1 px-2 py-1.5 bg-white/5 border border-white/10 rounded text-xs text-white/70 hover:bg-white/10 hover:text-white transition-colors"
-                                title="Google Favicon Service"
+                                title="Domestic Favicon Service (Iowen)"
                             >
-                                Google
+                                Domestic
                             </button>
                             <button 
                                 type="button"

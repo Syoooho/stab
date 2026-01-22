@@ -8,7 +8,7 @@ import { WeatherWidget } from './components/widgets/WeatherWidget';
 import { QuickCopyWidget } from './components/widgets/QuickCopyWidget';
 import { useNetworkStatus } from './hooks/useNetworkStatus';
 import { usePersistence } from './hooks/usePersistence';
-import type { App as AppType, WallpaperConfig, SystemConfig, WidgetConfig, WidgetType, QuickCopyItem } from './types';
+import type { App as AppType, WallpaperConfig, SystemConfig, WidgetConfig, WidgetType, QuickCopyItem, WebDavConfig } from './types';
 import { ContextMenu, type ContextMenuItem } from './components/ContextMenu';
 import { WallpaperSidebar } from './components/sidebars/WallpaperSidebar';
 import { SettingsSidebar } from './components/sidebars/SettingsSidebar';
@@ -17,6 +17,7 @@ import { NetworkSettingsModal } from './components/NetworkSettingsModal';
 import { CountdownSettingsModal } from './components/CountdownSettingsModal';
 import { QuickCopySettingsModal } from './components/QuickCopySettingsModal';
 import { Image as ImageIcon, Settings } from 'lucide-react';
+import { webDavClient } from './utils/webdav';
 
 // Default apps - Empty
 const DEFAULT_APPS: AppType[] = [];
@@ -128,6 +129,27 @@ function App() {
   useEffect(() => {
     // Logic moved to WallpaperSidebar or manual trigger
   }, []);
+
+  const handleCloudBackup = async (webDavConfig: WebDavConfig) => {
+      const payload = {
+          schema: 'stab-settings-v1',
+          exportedAt: new Date().toISOString(),
+          data: {
+              wallpaper,
+              apps,
+              systemConfig,
+              widgets
+          }
+      };
+      const content = JSON.stringify(payload);
+      await webDavClient.saveFile(webDavConfig, 'stab-backup.json', content);
+  };
+
+  const handleCloudRestore = async (webDavConfig: WebDavConfig) => {
+      const content = await webDavClient.getFile(webDavConfig, 'stab-backup.json');
+      const parsed = JSON.parse(content);
+      handleImportSettings(parsed);
+  };
 
   const handleExportSettings = () => {
       const payload = {
@@ -463,6 +485,8 @@ function App() {
         onChange={setSystemConfig}
         onExportSettings={handleExportSettings}
         onImportSettings={handleImportSettings}
+        onCloudBackup={handleCloudBackup}
+        onCloudRestore={handleCloudRestore}
       />
       
       {/* Modals */}

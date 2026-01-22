@@ -6,13 +6,94 @@ chrome.runtime.onInstalled.addListener(() => {
 
 // Listener for messages from the frontend
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === 'CHECK_NETWORK') {
-        checkAllNetworks(message.config).then(status => {
-            sendResponse(status);
-        });
-        return true; // Keep channel open for async response
-    }
+    // Return true to indicate we will respond asynchronously
+    const handleAsync = async () => {
+        try {
+            if (message.type === 'CHECK_NETWORK') {
+                const status = await checkAllNetworks(message.config);
+                sendResponse(status);
+            } else if (message.type === 'WEBDAV_SAVE') {
+                const result = await handleWebDavSave(message.config, message.filename, message.content);
+                sendResponse(result);
+            } else if (message.type === 'WEBDAV_GET') {
+                const result = await handleWebDavGet(message.config, message.filename);
+                sendResponse(result);
+            }
+        } catch (e) {
+            console.error('Background error:', e);
+            sendResponse({ success: false, error: e.message });
+        }
+    };
+
+    handleAsync();
+    return true; // Keep channel open
 });
+
+async function handleWebDavSave(config, filename, content) {
+    try {
+        const { url, username, password } = config;
+        const headers = {
+            'Content-Type': 'application/json', // Or text/plain if preferred
+        };
+
+        if (username && password) {
+            // Use utf8 safe encoding for basic auth
+            const auth = btoa(unescape(encodeURIComponent(`${username}:${password}`)));
+            headers['Authorization'] = 'Basic ' + auth;
+        }
+
+        const baseUrl = url.endsWith('/') ? url : `${url}/`;
+        const targetUrl = `${baseUrl}${filename}`;
+
+        const response = await fetch(targetUrl, {
+            method: 'PUT',
+            headers,
+            body: content,
+            keepalive: true
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text().catch(() => '');
+            return { success: false, error: `Status ${response.status}: ${response.statusText} ${errorText}` };
+        }
+        return { success: true };
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+}
+
+async function handleWebDavGet(config, filename) {
+    try {
+        const { url, username, password } = config;
+        const headers = {};
+
+        if (username && password) {
+            // Use utf8 safe encoding for basic auth
+            const auth = btoa(unescape(encodeURIComponent(`${username}:${password}`)));
+            headers['Authorization'] = 'Basic ' + auth;
+        }
+
+        const baseUrl = url.endsWith('/') ? url : `${url}/`;
+        const targetUrl = `${baseUrl}${filename}`;
+
+        const response = await fetch(targetUrl, {
+            method: 'GET',
+            headers,
+            cache: 'no-store',
+            keepalive: true
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text().catch(() => '');
+            return { success: false, error: `Status ${response.status}: ${response.statusText} ${errorText}` };
+        }
+        
+        const text = await response.text();
+        return { success: true, content: text };
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+}
 
 async function checkUrl(url) {
     if (!url) return null;
