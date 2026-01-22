@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, ChevronRight, ArrowLeft, Network, HardDrive } from 'lucide-react';
 
 interface SettingsSidebarProps {
   isOpen: boolean;
@@ -33,7 +33,10 @@ const SortablePriorityItem = ({ type, label }: { type: NetworkType, label: strin
     );
 };
 
+type SettingsView = 'main' | 'network' | 'backup';
+
 export const SettingsSidebar = ({ isOpen, onClose, config, onChange, onExportSettings, onImportSettings }: SettingsSidebarProps) => {
+  const [currentView, setCurrentView] = useState<SettingsView>('main');
   const [internalUrl, setInternalUrl] = useState(config.internalCheckUrl);
   const [meshUrl, setMeshUrl] = useState(config.meshCheckUrl);
   const [frpUrl, setFrpUrl] = useState(config.frpCheckUrl || '');
@@ -55,6 +58,7 @@ export const SettingsSidebar = ({ isOpen, onClose, config, onChange, onExportSet
         setFrpUrl(config.frpCheckUrl || '');
         setPublicUrl(config.publicCheckUrl);
         setPriority(config.urlPriority || ['internal', 'mesh', 'frp', 'public']);
+        setCurrentView('main');
     }
   }, [isOpen, config]);
 
@@ -105,10 +109,45 @@ export const SettingsSidebar = ({ isOpen, onClose, config, onChange, onExportSet
       }
   };
 
-  return (
-    <Sidebar isOpen={isOpen} onClose={onClose} position="right" title="系统设置">
-      <div className="space-y-8 pb-8">
-        
+  const renderMainView = () => (
+      <div className="space-y-2">
+          <button 
+            onClick={() => setCurrentView('network')}
+            className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-xl transition-colors group cursor-pointer"
+          >
+              <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400">
+                      <Network className="w-5 h-5" />
+                  </div>
+                  <span className="text-white/90 font-medium">网络设置</span>
+              </div>
+              <ChevronRight className="w-5 h-5 text-white/30 group-hover:text-white/60" />
+          </button>
+
+          <button 
+            onClick={() => setCurrentView('backup')}
+            className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-xl transition-colors group cursor-pointer"
+          >
+              <div className="flex items-center gap-3">
+                  <div className="p-2 bg-green-500/20 rounded-lg text-green-400">
+                      <HardDrive className="w-5 h-5" />
+                  </div>
+                  <span className="text-white/90 font-medium">备份与恢复</span>
+              </div>
+              <ChevronRight className="w-5 h-5 text-white/30 group-hover:text-white/60" />
+          </button>
+      </div>
+  );
+
+  const renderNetworkView = () => (
+      <div className="space-y-8 pb-8 animate-in slide-in-from-right duration-200">
+          <button 
+            onClick={() => setCurrentView('main')}
+            className="flex items-center gap-2 text-white/50 hover:text-white transition-colors mb-4 text-sm cursor-pointer"
+          >
+              <ArrowLeft className="w-4 h-4" /> 返回
+          </button>
+
         {/* Network Service Settings */}
         <section>
             <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
@@ -185,8 +224,19 @@ export const SettingsSidebar = ({ isOpen, onClose, config, onChange, onExportSet
                  </SortableContext>
              </DndContext>
         </section>
+      </div>
+  );
 
-        <section>
+  const renderBackupView = () => (
+      <div className="space-y-8 pb-8 animate-in slide-in-from-right duration-200">
+          <button 
+            onClick={() => setCurrentView('main')}
+            className="flex items-center gap-2 text-white/50 hover:text-white transition-colors mb-4 text-sm cursor-pointer"
+          >
+              <ArrowLeft className="w-4 h-4" /> 返回
+          </button>
+
+          <section>
             <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
                 导入 / 导出
             </h3>
@@ -195,7 +245,7 @@ export const SettingsSidebar = ({ isOpen, onClose, config, onChange, onExportSet
                     type="button"
                     onClick={onExportSettings}
                     disabled={!onExportSettings}
-                    className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white/80 hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white/80 hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                 >
                     导出配置
                 </button>
@@ -203,7 +253,7 @@ export const SettingsSidebar = ({ isOpen, onClose, config, onChange, onExportSet
                     type="button"
                     onClick={handleClickImport}
                     disabled={!onImportSettings}
-                    className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white/80 hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white/80 hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                 >
                     导入配置
                 </button>
@@ -216,8 +266,14 @@ export const SettingsSidebar = ({ isOpen, onClose, config, onChange, onExportSet
                 />
             </div>
         </section>
-
       </div>
+  );
+
+  return (
+    <Sidebar isOpen={isOpen} onClose={onClose} position="right" title={currentView === 'main' ? "系统设置" : (currentView === 'network' ? "网络设置" : "备份与恢复")}>
+        {currentView === 'main' && renderMainView()}
+        {currentView === 'network' && renderNetworkView()}
+        {currentView === 'backup' && renderBackupView()}
     </Sidebar>
   );
 };

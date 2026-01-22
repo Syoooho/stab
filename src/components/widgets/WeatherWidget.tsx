@@ -55,20 +55,20 @@ export const WeatherWidget = ({ city }: WeatherWidgetProps) => {
     }
 
     return (
-        <div className="glass p-4 rounded-xl h-32 flex flex-col justify-between">
+        <div className="glass p-[1.5vh] rounded-xl h-[14vh] flex flex-col justify-between">
             <div className="flex justify-between items-start">
-                 <div className="text-sm font-medium text-white/70">天气</div>
+                 <div className="font-medium text-white/70" style={{ fontSize: 'clamp(12px, 1.5vh, 14px)' }}>天气</div>
                  {data && getIcon(data.weather)}
             </div>
             <div>
                 {loading && !data ? (
-                    <div className="text-2xl font-bold animate-pulse">--°</div>
+                    <div className="font-bold animate-pulse" style={{ fontSize: 'clamp(20px, 3vh, 24px)' }}>--°</div>
                 ) : error ? (
-                    <div className="text-sm text-red-400">获取失败</div>
+                    <div className="text-red-400" style={{ fontSize: 'clamp(12px, 1.5vh, 14px)' }}>获取失败</div>
                 ) : (
                     <>
-                        <div className="text-3xl font-bold">{data?.temperature}°C</div>
-                        <div className="text-xs text-white/50">{data?.city} · {data?.weather}</div>
+                        <div className="font-bold" style={{ fontSize: 'clamp(24px, 3.5vh, 32px)' }}>{data?.temperature}°C</div>
+                        <div className="text-white/50" style={{ fontSize: 'clamp(10px, 1.2vh, 12px)' }}>{data?.city} · {data?.weather}</div>
                     </>
                 )}
             </div>

@@ -29,47 +29,47 @@ export const NetworkStatusWidget = ({ status }: { status: ExtendedNetworkStatus 
   };
 
   return (
-    <div className="glass p-4 rounded-xl h-32 flex flex-col justify-between relative group">
+    <div className="glass p-[1.5vh] rounded-xl h-[14vh] flex flex-col justify-between relative group">
       <div className={`flex flex-col h-full ${status.isChecking ? 'opacity-70' : ''}`}>
         <div className="flex items-center justify-between flex-1">
-           <div className="flex items-center gap-2 text-xs">
+           <div className="flex items-center gap-2" style={{ fontSize: 'clamp(10px, 1.2vh, 12px)' }}>
              <Server className="w-3 h-3" /> 内网
            </div>
            <div className="flex items-center gap-2">
-               <span className="text-[10px] text-white/30 tabular-nums">
+               <span className="text-white/30 tabular-nums" style={{ fontSize: 'clamp(8px, 1vh, 10px)' }}>
                  {status.isChecking ? <LoadingDots /> : getLatencyText(status.latencies?.internal)}
                </span>
                <div className={`w-2 h-2 rounded-full ${getStatusColor(status.internal, status.latencies?.internal)} ${status.isChecking ? 'animate-pulse' : ''}`} />
            </div>
         </div>
         <div className="flex items-center justify-between flex-1">
-           <div className="flex items-center gap-2 text-xs">
+           <div className="flex items-center gap-2" style={{ fontSize: 'clamp(10px, 1.2vh, 12px)' }}>
              <Wifi className="w-3 h-3" /> 组网
            </div>
            <div className="flex items-center gap-2">
-               <span className="text-[10px] text-white/30 tabular-nums">
+               <span className="text-white/30 tabular-nums" style={{ fontSize: 'clamp(8px, 1vh, 10px)' }}>
                  {status.isChecking ? <LoadingDots /> : getLatencyText(status.latencies?.mesh)}
                </span>
                <div className={`w-2 h-2 rounded-full ${getStatusColor(status.mesh, status.latencies?.mesh)} ${status.isChecking ? 'animate-pulse' : ''}`} />
            </div>
         </div>
         <div className="flex items-center justify-between flex-1">
-           <div className="flex items-center gap-2 text-xs">
+           <div className="flex items-center gap-2" style={{ fontSize: 'clamp(10px, 1.2vh, 12px)' }}>
              <Link className="w-3 h-3" /> FRP
            </div>
            <div className="flex items-center gap-2">
-               <span className="text-[10px] text-white/30 tabular-nums">
+               <span className="text-white/30 tabular-nums" style={{ fontSize: 'clamp(8px, 1vh, 10px)' }}>
                  {status.isChecking ? <LoadingDots /> : getLatencyText(status.latencies?.frp)}
                </span>
                <div className={`w-2 h-2 rounded-full ${getStatusColor(status.frp, status.latencies?.frp)} ${status.isChecking ? 'animate-pulse' : ''}`} />
            </div>
         </div>
         <div className="flex items-center justify-between flex-1">
-           <div className="flex items-center gap-2 text-xs">
+           <div className="flex items-center gap-2" style={{ fontSize: 'clamp(10px, 1.2vh, 12px)' }}>
              <Globe className="w-3 h-3" /> 公网
            </div>
            <div className="flex items-center gap-2">
-               <span className="text-[10px] text-white/30 tabular-nums">
+               <span className="text-white/30 tabular-nums" style={{ fontSize: 'clamp(8px, 1vh, 10px)' }}>
                  {status.isChecking ? <LoadingDots /> : getLatencyText(status.latencies?.public)}
                </span>
                <div className={`w-2 h-2 rounded-full ${getStatusColor(status.public, status.latencies?.public)} ${status.isChecking ? 'animate-pulse' : ''}`} />

@@ -69,6 +69,61 @@ function App() {
   const [isCountdownSettingsOpen, setIsCountdownSettingsOpen] = useState(false);
   const [isQuickCopySettingsOpen, setIsQuickCopySettingsOpen] = useState(false);
   
+  // Folder State
+  const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
+  const [targetFolderId, setTargetFolderId] = useState<string | null>(null);
+
+  const findFolder = (apps: AppType[], folderId: string | null): AppType | null => {
+      if (!folderId) return null;
+      for (const app of apps) {
+          if (app.id === folderId && app.type === 'folder') return app;
+          if (app.children) {
+              const found = findFolder(app.children, folderId);
+              if (found) return found;
+          }
+      }
+      return null;
+  };
+
+  // Computed apps to display
+  const displayedApps = currentFolderId 
+      ? (findFolder(apps, currentFolderId)?.children || [])
+      : apps;
+
+  // Safety check
+  useEffect(() => {
+      if (currentFolderId && !findFolder(apps, currentFolderId)) {
+          setCurrentFolderId(null);
+      }
+  }, [apps, currentFolderId]);
+  
+  // Helper to update app tree
+  const updateAppTree = (apps: AppType[], folderId: string | null, updater: (list: AppType[]) => AppType[]): AppType[] => {
+      if (folderId === null) {
+          return updater(apps);
+      }
+      return apps.map(app => {
+          if (app.id === folderId && app.type === 'folder') {
+              return { ...app, children: updater(app.children || []) };
+          }
+          if (app.children) {
+              return { ...app, children: updateAppTree(app.children, folderId, updater) };
+          }
+          return app;
+      });
+  };
+
+  const removeAppsRecursive = (apps: AppType[], idsToRemove: string[]): AppType[] => {
+      return apps
+          .filter(app => !idsToRemove.includes(app.id))
+          .map(app => {
+              if (app.children) {
+                  return { ...app, children: removeAppsRecursive(app.children, idsToRemove) };
+              }
+              return app;
+          });
+  };
+  
   // Check Bing Daily on startup
   useEffect(() => {
     // Logic moved to WallpaperSidebar or manual trigger
@@ -115,13 +170,25 @@ function App() {
       items: ContextMenuItem[];
   } | null>(null);
 
+  const updateAppInTree = (apps: AppType[], updatedApp: AppType): AppType[] => {
+      return apps.map(app => {
+          if (app.id === updatedApp.id) return updatedApp;
+          if (app.children) {
+              return { ...app, children: updateAppInTree(app.children, updatedApp) };
+          }
+          return app;
+      });
+  };
+
   const handleSaveApp = (app: AppType) => {
+    const target = targetFolderId ?? currentFolderId;
     if (editingApp) {
-        setApps(apps.map(a => a.id === app.id ? app : a));
+        setApps(prevApps => updateAppInTree(prevApps, app));
     } else {
-        setApps([...apps, app]);
+        setApps(prevApps => updateAppTree(prevApps, target, (list) => [...list, app]));
     }
     setEditingApp(null);
+    setTargetFolderId(null);
   };
 
   const handleCloseModal = () => {
@@ -129,12 +196,37 @@ function App() {
       setEditingApp(null);
   };
 
-  const handleDeleteApp = (id: string) => {
-      setApps(apps.filter(a => a.id !== id));
+  const handleDeleteApps = (ids: string[]) => {
+      setApps(prevApps => removeAppsRecursive(prevApps, ids));
   };
 
   const handleReorder = (newOrder: AppType[]) => {
-    setApps(newOrder);
+    setApps(prevApps => updateAppTree(prevApps, currentFolderId, () => newOrder));
+  };
+  
+  const handleMoveToFolder = (appId: string, folderId: string) => {
+    setApps(prevApps => {
+        // Find the app and remove it from current level
+        let appToMove: AppType | undefined;
+        
+        // Helper to find and remove app
+        const findAndRemove = (list: AppType[]): AppType[] => {
+            const index = list.findIndex(a => a.id === appId);
+            if (index !== -1) {
+                appToMove = list[index];
+                return [...list.slice(0, index), ...list.slice(index + 1)];
+            }
+            return list;
+        };
+
+        // First remove from current context
+        const appsWithoutMoved = updateAppTree(prevApps, currentFolderId, findAndRemove);
+        
+        if (!appToMove) return prevApps;
+
+        // Then add to target folder
+        return updateAppTree(appsWithoutMoved, folderId, (list) => [...list, appToMove!]);
+    });
   };
 
   const handleRandomWallpaper = () => {
@@ -182,6 +274,23 @@ function App() {
           y: e.clientY,
           items: [
               { label: '添加书签', action: () => { setEditingApp(null); setIsModalOpen(true); } },
+              { 
+                  label: '新建文件夹', 
+                  action: () => {
+                      const name = prompt("请输入文件夹名称", "新建文件夹");
+                      if (name) {
+                          const newFolder: AppType = {
+                              id: crypto.randomUUID(),
+                              name,
+                              icon: 'folder', // Will be handled by AppIcon
+                              type: 'folder',
+                              children: [],
+                              urls: { internal: '', public: '' }
+                          };
+                          setApps(prevApps => updateAppTree(prevApps, currentFolderId, (list) => [...list, newFolder]));
+                      }
+                  } 
+              },
               // Simple toggle for demo purposes
               { label: '添加组件', action: () => setWidgets(widgets.map(w => ({ ...w, visible: true }))) },
               { label: '随机壁纸', action: handleRandomWallpaper },
@@ -197,7 +306,29 @@ function App() {
           y: e.clientY,
           items: [
               { label: '编辑', action: () => { setEditingApp(app); setIsModalOpen(true); } },
-              { label: '删除', action: () => handleDeleteApp(app.id), danger: true },
+              { label: '删除', action: () => handleDeleteApps([app.id]), danger: true },
+          ]
+      });
+  };
+
+  const handleUpdateFolder = (folderId: string, newChildren: AppType[]) => {
+      setApps(prevApps => updateAppTree(prevApps, folderId, () => newChildren));
+  };
+
+  const handlePopupContextMenu = (e: React.MouseEvent, folder: AppType) => {
+      e.preventDefault();
+      setContextMenu({
+          x: e.clientX,
+          y: e.clientY,
+          items: [
+              { 
+                  label: '添加书签', 
+                  action: () => { 
+                      setTargetFolderId(folder.id);
+                      setEditingApp(null); 
+                      setIsModalOpen(true); 
+                  } 
+              },
           ]
       });
   };
@@ -265,13 +396,13 @@ function App() {
           <Settings className="w-5 h-5 text-white/70" />
       </button>
 
-      <main className="relative z-10 container mx-auto px-4 py-12 min-h-screen flex flex-col items-center pt-40">
+      <main className="relative z-10 container mx-auto px-4 py-12 min-h-screen flex flex-col items-center pt-[15vh]">
         
-        <div className="w-full max-w-4xl mb-12" onContextMenu={(e) => e.stopPropagation()}>
+        <div className="w-full max-w-4xl mb-[4vh]" onContextMenu={(e) => e.stopPropagation()}>
              <SearchBox />
         </div>
 
-        <div className="w-full max-w-5xl mb-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="w-full max-w-5xl mb-[4vh] grid grid-cols-2 md:grid-cols-4 gap-4">
              {widgets.map(widget => {
                  if (!widget.visible) return null;
                  return (
@@ -291,12 +422,21 @@ function App() {
         </div>
 
         <SmartLauncher 
-            apps={apps} 
+            apps={displayedApps} 
             onReorder={handleReorder} 
             networkStatus={networkStatus} 
             systemConfig={systemConfig}
-            onAddApp={() => { setEditingApp(null); setIsModalOpen(true); }}
+            onAddApp={(folderId) => { 
+                setTargetFolderId(folderId || null);
+                setEditingApp(null); 
+                setIsModalOpen(true); 
+            }}
             onContextMenu={handleAppContextMenu}
+            currentFolderId={currentFolderId}
+            onFolderChange={setCurrentFolderId}
+            onMoveToFolder={handleMoveToFolder}
+            onUpdateFolder={handleUpdateFolder}
+            onPopupContextMenu={handlePopupContextMenu}
         />
 
         <AddAppModal 

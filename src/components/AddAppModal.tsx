@@ -80,6 +80,7 @@ const PRESETS = [
 
 export const AddAppModal = ({ isOpen, onClose, onAdd, initialData, systemConfig }: AddAppModalProps) => {
   const [mode, setMode] = useState<'presets' | 'custom'>('presets');
+  const isFolder = initialData?.type === 'folder';
   
   // Custom mode state
   const [name, setName] = useState('');
@@ -240,6 +241,20 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData, systemConfig 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isFolder) {
+        if (!name) return;
+        const updatedFolder: App = {
+            id: initialData!.id,
+            name,
+            icon: initialData!.icon || 'folder',
+            type: 'folder',
+            children: initialData!.children || [],
+            urls: initialData!.urls || {}
+        };
+        onAdd(updatedFolder);
+        onClose();
+        return;
+    }
     const hasAnyUrl = Boolean(
         publicUrl ||
         internalUrl ||
@@ -331,10 +346,39 @@ export const AddAppModal = ({ isOpen, onClose, onAdd, initialData, systemConfig 
           
           <div className="p-6">
               <h2 className="text-xl font-bold mb-6 text-white">
-                  {initialData ? '编辑应用' : (mode === 'presets' ? '添加应用' : '自定义应用')}
+                  {initialData ? (isFolder ? '编辑文件夹' : '编辑应用') : (mode === 'presets' ? '添加应用' : '自定义应用')}
               </h2>
 
-              {mode === 'presets' ? (
+              {isFolder ? (
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-medium text-white/50 mb-1">文件夹名称</label>
+                      <input
+                        type="text"
+                        className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30"
+                        placeholder="输入文件夹名称"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        autoFocus
+                      />
+                    </div>
+                    <div className="flex justify-end gap-2 pt-2">
+                      <button
+                        type="button"
+                        onClick={onClose}
+                        className="px-3 py-2 text-sm bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white/70 transition-colors"
+                      >
+                        取消
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-3 py-2 text-sm bg-blue-500 hover:bg-blue-600 rounded-lg text-white transition-colors"
+                      >
+                        保存
+                      </button>
+                    </div>
+                  </form>
+              ) : mode === 'presets' ? (
                   <>
                     <div className="grid grid-cols-4 sm:grid-cols-5 gap-4 mb-8 max-h-[60vh] overflow-y-auto custom-scrollbar p-1">
                         {PRESETS.map(preset => (

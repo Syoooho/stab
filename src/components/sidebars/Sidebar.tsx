@@ -42,7 +42,7 @@ export const Sidebar = ({ isOpen, onClose, position, title, children }: SidebarP
           >
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-bold text-white">{title}</h2>
-              <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+              <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors cursor-pointer">
                 <X className="w-5 h-5 text-white/70" />
               </button>
             </div>

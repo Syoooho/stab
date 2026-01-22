@@ -10,6 +10,8 @@ export interface App {
   name: string;
   icon: string;
   urls: AppUrls;
+  type?: 'app' | 'folder';
+  children?: App[];
 }
 
 export interface NetworkStatus {
