@@ -1,7 +1,7 @@
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragOverlay, type DragStartEvent, type DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, memo } from 'react';
 import type { App, NetworkStatus, SystemConfig } from '../types';
 import { AppIcon } from './AppIcon';
 import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -33,7 +33,7 @@ interface SortableItemProps {
     onClick?: (rect: DOMRect) => void;
 }
 
-const SortableItem = ({ app, networkStatus, systemConfig, onContextMenu, onClick }: SortableItemProps) => {
+const SortableItem = memo(({ app, networkStatus, systemConfig, onContextMenu, onClick }: SortableItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: app.id });
 
   const style = {
@@ -54,7 +54,7 @@ const SortableItem = ({ app, networkStatus, systemConfig, onContextMenu, onClick
       />
     </div>
   );
-};
+});
 
 export const SmartLauncher = ({ apps, onReorder, networkStatus, systemConfig, onAddApp, onContextMenu, currentFolderId, onFolderChange, onMoveToFolder, onUpdateFolder, onPopupContextMenu }: SmartLauncherProps) => {
   const [activeId, setActiveId] = useState<string | null>(null);

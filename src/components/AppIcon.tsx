@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react';
 import type { App, NetworkStatus, SystemConfig } from '../types';
 import { getBestUrl } from '../utils/network';
 
@@ -9,12 +10,12 @@ interface AppIconProps {
   onContextMenu?: (e: React.MouseEvent, app: App) => void;
 }
 
-export const AppIcon = ({ app, networkStatus, systemConfig, onClick, onContextMenu }: AppIconProps) => {
+export const AppIcon = memo(({ app, networkStatus, systemConfig, onClick, onContextMenu }: AppIconProps) => {
   const { url } = getBestUrl(app, networkStatus, systemConfig);
   const isFolder = app.type === 'folder';
   const isDisabled = !isFolder && url === '#';
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = useCallback((e: React.MouseEvent) => {
       e.preventDefault();
       if (isFolder) {
           const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -28,16 +29,15 @@ export const AppIcon = ({ app, networkStatus, systemConfig, onClick, onContextMe
       } else {
           window.open(url, '_blank', 'noopener,noreferrer');
       }
-  };
+  }, [isFolder, isDisabled, onClick, url]);
 
-
-  const handleContextMenu = (e: React.MouseEvent) => {
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
       if (onContextMenu) {
           e.preventDefault();
-          e.stopPropagation(); // Stop bubbling to container
+          e.stopPropagation();
           onContextMenu(e, app);
       }
-  };
+  }, [onContextMenu, app]);
 
   if (app.type === 'folder') {
       const children = app.children || [];
@@ -90,4 +90,4 @@ export const AppIcon = ({ app, networkStatus, systemConfig, onClick, onContextMe
       </span>
     </div>
   );
-};
+});
