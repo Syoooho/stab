@@ -1,7 +1,7 @@
 import { Sidebar } from './Sidebar';
 import type { SystemConfig, NetworkType, WebDavConfig } from '../../types';
 import { useState, useEffect, useRef } from 'react';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, ChevronRight, ArrowLeft, Network, HardDrive, Loader2, Check, AlertCircle, Cloud } from 'lucide-react';
@@ -109,16 +109,21 @@ export const SettingsSidebar = ({ isOpen, onClose, config, onChange, onExportSet
   const handleImportFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file || !onImportSettings) return;
-      const text = await file.text();
-      const parsed = JSON.parse(text);
-      onImportSettings(parsed);
+      try {
+          const text = await file.text();
+          const parsed = JSON.parse(text);
+          onImportSettings(parsed);
+      } catch (error) {
+          console.error('导入配置失败:', error);
+          alert('导入配置失败：请确保文件是有效的 JSON 格式');
+      }
       e.target.value = '';
   };
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
       const { active, over } = event;
-      if (active.id !== over.id) {
-          const newPriority = arrayMove(priority, priority.indexOf(active.id), priority.indexOf(over.id));
+      if (over && active.id !== over.id) {
+          const newPriority = arrayMove(priority, priority.indexOf(active.id as NetworkType), priority.indexOf(over.id as NetworkType));
           setPriority(newPriority);
           // Auto save on drag end
           onChange({

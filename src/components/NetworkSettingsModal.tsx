@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, GripVertical } from 'lucide-react';
 import type { SystemConfig, NetworkType } from '../types';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -68,12 +68,12 @@ export const NetworkSettingsModal = ({ isOpen, onClose, config, onChange }: Netw
     onClose();
   };
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
       const { active, over } = event;
-      if (active.id !== over.id) {
+      if (over && active.id !== over.id) {
           setPriority((items) => {
-              const oldIndex = items.indexOf(active.id);
-              const newIndex = items.indexOf(over.id);
+              const oldIndex = items.indexOf(active.id as NetworkType);
+              const newIndex = items.indexOf(over.id as NetworkType);
               return arrayMove(items, oldIndex, newIndex);
           });
       }

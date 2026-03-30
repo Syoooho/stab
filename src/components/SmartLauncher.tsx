@@ -1,4 +1,4 @@
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragOverlay, type DragStartEvent, type DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useEffect, useState, useRef } from 'react';
@@ -127,11 +127,11 @@ export const SmartLauncher = ({ apps, onReorder, networkStatus, systemConfig, on
     })
   );
 
-  const handleDragStart = (event: any) => {
-    setActiveId(event.active.id);
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
   };
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (!over) {
@@ -157,7 +157,7 @@ export const SmartLauncher = ({ apps, onReorder, networkStatus, systemConfig, on
     setActiveId(null);
   };
 
-  const handlePopupDragEnd = (event: any) => {
+  const handlePopupDragEnd = (event: DragEndEvent) => {
       const { active, over } = event;
       if (!over || active.id === over.id || !modalFolder) {
           setActiveId(null);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-function isPlainObject(obj: any): boolean {
+function isPlainObject(obj: unknown): boolean {
     return Object.prototype.toString.call(obj) === '[object Object]';
 }
 
@@ -45,7 +45,7 @@ export function usePersistence<T>(key: string, initialValue: T) {
   // Hydrate from Chrome storage on mount if available
   useEffect(() => {
       if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-          chrome.storage.local.get([key], (result: Record<string, any>) => {
+          chrome.storage.local.get([key], (result: Record<string, unknown>) => {
               if (result[key]) {
                   const fetched = result[key];
                   // Same merge logic for chrome storage

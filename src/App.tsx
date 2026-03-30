@@ -174,16 +174,18 @@ function App() {
       URL.revokeObjectURL(url);
   };
 
-  const handleImportSettings = (input: unknown) => {
-      if (!input || typeof input !== 'object') return;
-      const anyInput = input as any;
-      const data = anyInput.data ?? anyInput;
-
-      if (data?.wallpaper) setWallpaper(data.wallpaper);
-      if (Array.isArray(data?.apps)) setApps(data.apps);
-      if (data?.systemConfig) setSystemConfig(data.systemConfig);
-      if (Array.isArray(data?.widgets)) setWidgets(data.widgets);
-  };
+const handleImportSettings = (input: unknown) => {
+       if (!input || typeof input !== 'object') return;
+       const data = (input as Record<string, unknown>).data ?? input;
+       
+       if (data && typeof data === 'object') {
+           const safeData = data as Record<string, unknown>;
+           if (safeData.wallpaper) setWallpaper(safeData.wallpaper as WallpaperConfig);
+           if (Array.isArray(safeData.apps)) setApps(safeData.apps as AppType[]);
+           if (safeData.systemConfig) setSystemConfig(safeData.systemConfig as SystemConfig);
+           if (Array.isArray(safeData.widgets)) setWidgets(safeData.widgets as WidgetConfig[]);
+       }
+   };
 
   // Context Menu State
   const [contextMenu, setContextMenu] = useState<{
