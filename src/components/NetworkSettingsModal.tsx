@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, GripVertical } from 'lucide-react';
+import { X } from 'lucide-react';
 import type { SystemConfig, NetworkType } from '../types';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortablePriorityItem } from './shared/SortablePriorityItem';
 
 interface NetworkSettingsModalProps {
   isOpen: boolean;
@@ -12,24 +12,6 @@ interface NetworkSettingsModalProps {
   config: SystemConfig;
   onChange: (config: SystemConfig) => void;
 }
-
-const SortablePriorityItem = ({ type, label }: { type: NetworkType, label: string }) => {
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: type });
-    
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-    };
-
-    return (
-        <div ref={setNodeRef} style={style} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/5 mb-2 touch-none">
-            <span className="text-sm text-white/80">{label}</span>
-            <div {...attributes} {...listeners} className="text-white/30 cursor-grab hover:text-white/60">
-                <GripVertical className="w-4 h-4" />
-            </div>
-        </div>
-    );
-};
 
 export const NetworkSettingsModal = ({ isOpen, onClose, config, onChange }: NetworkSettingsModalProps) => {
   const [internalUrl, setInternalUrl] = useState(config.internalCheckUrl);

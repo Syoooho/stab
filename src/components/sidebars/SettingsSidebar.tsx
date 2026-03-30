@@ -2,9 +2,9 @@ import { Sidebar } from './Sidebar';
 import type { SystemConfig, NetworkType, WebDavConfig } from '../../types';
 import { useState, useEffect, useRef } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, ChevronRight, ArrowLeft, Network, HardDrive, Loader2, Check, AlertCircle, Cloud } from 'lucide-react';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { ChevronRight, ArrowLeft, Network, HardDrive, Loader2, Check, AlertCircle, Cloud } from 'lucide-react';
+import { SortablePriorityItem } from '../shared/SortablePriorityItem';
 
 interface SettingsSidebarProps {
   isOpen: boolean;
@@ -16,24 +16,6 @@ interface SettingsSidebarProps {
   onCloudBackup?: (config: WebDavConfig) => Promise<void>;
   onCloudRestore?: (config: WebDavConfig) => Promise<void>;
 }
-
-const SortablePriorityItem = ({ type, label }: { type: NetworkType, label: string }) => {
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: type });
-    
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-    };
-
-    return (
-        <div ref={setNodeRef} style={style} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/5 mb-2 touch-none">
-            <span className="text-sm text-white/80">{label}</span>
-            <div {...attributes} {...listeners} className="text-white/30 cursor-grab hover:text-white/60">
-                <GripVertical className="w-4 h-4" />
-            </div>
-        </div>
-    );
-};
 
 type SettingsView = 'main' | 'network' | 'backup';
 
