@@ -146,7 +146,7 @@ export const SmartLauncher = ({ apps, onReorder, networkStatus, systemConfig, on
       
       // If dropping an app onto a folder (and not the folder itself)
       if (overApp?.type === 'folder' && activeApp?.type !== 'folder') {
-          onMoveToFolder(active.id, over.id);
+          onMoveToFolder(active.id as string, over.id as string);
       } else {
           // Regular reorder
           const oldIndex = apps.findIndex((app) => app.id === active.id);
@@ -165,8 +165,8 @@ export const SmartLauncher = ({ apps, onReorder, networkStatus, systemConfig, on
       }
 
       const children = modalFolder.children || [];
-      const oldIndex = children.findIndex((c) => c.id === active.id);
-      const newIndex = children.findIndex((c) => c.id === over.id);
+      const oldIndex = children.findIndex((c) => c.id === String(active.id));
+      const newIndex = children.findIndex((c) => c.id === String(over.id));
 
       if (oldIndex !== -1 && newIndex !== -1) {
           const newChildren = arrayMove(children, oldIndex, newIndex);

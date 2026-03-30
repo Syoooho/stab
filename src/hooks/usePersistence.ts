@@ -50,9 +50,9 @@ export function usePersistence<T>(key: string, initialValue: T) {
                   const fetched = result[key];
                   // Same merge logic for chrome storage
                   if (isPlainObject(initialValue) && isPlainObject(fetched)) {
-                      setStoredValue({ ...initialValue, ...fetched });
+                      setStoredValue({ ...initialValue, ...fetched } as T);
                   } else {
-                      setStoredValue(fetched);
+                      setStoredValue(fetched as T);
                   }
               }
           });
